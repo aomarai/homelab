@@ -19,6 +19,12 @@ spec:
         - path:
             type: PathPrefix
             value: /api
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
       backendRefs:
         - name: api
           port: 14702
@@ -26,6 +32,12 @@ spec:
         - path:
             type: PathPrefix
             value: /ws
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
       backendRefs:
         - name: events
           port: 14703
@@ -33,6 +45,12 @@ spec:
         - path:
             type: PathPrefix
             value: /autumn
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
       backendRefs:
         - name: autumn
           port: 14704
@@ -40,6 +58,12 @@ spec:
         - path:
             type: PathPrefix
             value: /january
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
       backendRefs:
         - name: january
           port: 14705
@@ -47,6 +71,12 @@ spec:
         - path:
             type: PathPrefix
             value: /gifbox
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
       backendRefs:
         - name: gifbox
           port: 14706
@@ -54,6 +84,12 @@ spec:
         - path:
             type: PathPrefix
             value: /livekit
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
       backendRefs:
         - name: livekit
           port: 7880
@@ -61,6 +97,12 @@ spec:
         - path:
             type: PathPrefix
             value: /ingress
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
       backendRefs:
         - name: voice-ingress
           port: 8500
