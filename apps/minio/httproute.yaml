@@ -5,15 +5,24 @@ metadata:
   namespace: minio
 spec:
   parentRefs:
-    - name: homelab
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: homelab
       namespace: traefik
       sectionName: websecure
   hostnames:
     - minio.homelab.local
   rules:
-    - backendRefs:
-        - name: minio
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: minio
           port: 9000
+          weight: 1
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -22,12 +31,21 @@ metadata:
   namespace: minio
 spec:
   parentRefs:
-    - name: homelab
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: homelab
       namespace: traefik
       sectionName: websecure
   hostnames:
     - minio-console.homelab.local
   rules:
-    - backendRefs:
-        - name: minio-console
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: minio-console
           port: 9001
+          weight: 1
