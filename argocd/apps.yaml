@@ -320,3 +320,51 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+---
+# Stoat self-hosted
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: stoat
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/aomarai/homelab.git
+    targetRevision: HEAD
+    path: apps/stoat
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: stoat
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# Cloudflare Tunnel for Stoat (Option C: tunnel for HTTP, direct UDP for LiveKit)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cloudflared-stoat
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/aomarai/homelab.git
+    targetRevision: HEAD
+    path: apps/cloudflared-stoat
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: stoat
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

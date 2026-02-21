@@ -1,0 +1,95 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: stoat-web
+  namespace: stoat
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: homelab
+      namespace: traefik
+      sectionName: websecure
+  hostnames:
+    - stoat.homelab.local
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: api
+          port: 14702
+          weight: 1
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /ws
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: events
+          port: 14703
+          weight: 1
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /autumn
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: autumn
+          port: 14704
+          weight: 1
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /january
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: january
+          port: 14705
+          weight: 1
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /gifbox
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: gifbox
+          port: 14706
+          weight: 1
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /livekit
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: livekit
+          port: 7880
+          weight: 1
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /ingress
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: voice-ingress
+          port: 8500
+          weight: 1
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: web
+          port: 5000
+          weight: 1

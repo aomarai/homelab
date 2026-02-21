@@ -1,0 +1,147 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: database
+  namespace: stoat
+spec:
+  selector:
+    app: database
+  ports:
+    - port: 27017
+      targetPort: 27017
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: stoat
+spec:
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbit
+  namespace: stoat
+spec:
+  selector:
+    app: rabbit
+  ports:
+    - port: 5672
+      targetPort: 5672
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  namespace: stoat
+spec:
+  selector:
+    app: api
+  ports:
+    - port: 14702
+      targetPort: 14702
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: events
+  namespace: stoat
+spec:
+  selector:
+    app: events
+  ports:
+    - port: 14703
+      targetPort: 14703
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: autumn
+  namespace: stoat
+spec:
+  selector:
+    app: autumn
+  ports:
+    - port: 14704
+      targetPort: 14704
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: january
+  namespace: stoat
+spec:
+  selector:
+    app: january
+  ports:
+    - port: 14705
+      targetPort: 14705
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gifbox
+  namespace: stoat
+spec:
+  selector:
+    app: gifbox
+  ports:
+    - port: 14706
+      targetPort: 14706
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: voice-ingress
+  namespace: stoat
+spec:
+  selector:
+    app: voice-ingress
+  ports:
+    - port: 8500
+      targetPort: 8500
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: livekit
+  namespace: stoat
+spec:
+  selector:
+    app: livekit
+  ports:
+    - name: http
+      port: 7880
+      targetPort: 7880
+      protocol: TCP
+    - name: rtc-tcp
+      port: 7881
+      targetPort: 7881
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  namespace: stoat
+spec:
+  selector:
+    app: web
+  ports:
+    - port: 5000
+      targetPort: 5000
+      protocol: TCP

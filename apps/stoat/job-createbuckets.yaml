@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-stoat-buckets
+  namespace: stoat
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: mc
+          image: docker.io/minio/mc:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              mc alias set stoat-minio http://minio.minio.svc.cluster.local:9000 stoat $MINIO_PASSWORD
+              mc mb --ignore-existing stoat-minio/revolt-uploads
+              mc anonymous set download stoat-minio/revolt-uploads
+          env:
+            - name: MINIO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: stoat-minio-credentials
+                  key: password

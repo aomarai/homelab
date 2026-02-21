@@ -1,0 +1,484 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database
+  namespace: stoat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      containers:
+        - name: database
+          image: docker.io/mongo:latest
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: database-data
+              mountPath: /data/db
+            - name: revolt-toml
+              mountPath: /Revolt.toml
+              subPath: Revolt.toml
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - "echo 'db.runCommand(\"ping\").ok' | mongosh localhost:27017/test --quiet"
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - "echo 'db.runCommand(\"ping\").ok' | mongosh localhost:27017/test --quiet"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: database-data
+          persistentVolumeClaim:
+            claimName: database-data
+        - name: revolt-toml
+          configMap:
+            name: revolt-toml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: stoat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: docker.io/eqalpha/keydb:latest
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: revolt-toml
+              mountPath: /Revolt.toml
+              subPath: Revolt.toml
+      volumes:
+        - name: revolt-toml
+          configMap:
+            name: revolt-toml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbit
+  namespace: stoat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbit
+  template:
+    metadata:
+      labels:
+        app: rabbit
+    spec:
+      containers:
+        - name: rabbit
+          image: docker.io/rabbitmq:4
+          ports:
+            - containerPort: 5672
+          envFrom:
+            - secretRef:
+                name: rabbit-credentials
+          volumeMounts:
+            - name: rabbit-data
+              mountPath: /var/lib/rabbitmq
+            - name: revolt-toml
+              mountPath: /Revolt.toml
+              subPath: Revolt.toml
+          readinessProbe:
+            exec:
+              command:
+                - rabbitmq-diagnostics
+                - -q
+                - ping
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - rabbitmq-diagnostics
+                - -q
+                - ping
+            initialDelaySeconds: 60
+            periodSeconds: 10
+      volumes:
+        - name: rabbit-data
+          persistentVolumeClaim:
+            claimName: rabbit-data
+        - name: revolt-toml
+          configMap:
+            name: revolt-toml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: stoat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      initContainers:
+        - name: wait-db
+          image: busybox:latest
+          command:
+            - /bin/sh
+            - -c
+            - until nc -z database 27017; do echo waiting for database; sleep 2; done
+        - name: wait-rabbit
+          image: busybox:latest
+          command:
+            - /bin/sh
+            - -c
+            - until nc -z rabbit 5672; do echo waiting for rabbit; sleep 2; done
+      containers:
+        - name: api
+          image: ghcr.io/stoatchat/api:v0.11.1
+          ports:
+            - containerPort: 14702
+          volumeMounts:
+            - name: revolt-toml
+              mountPath: /Revolt.toml
+              subPath: Revolt.toml
+      volumes:
+        - name: revolt-toml
+          configMap:
+            name: revolt-toml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: events
+  namespace: stoat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: events
+  template:
+    metadata:
+      labels:
+        app: events
+    spec:
+      initContainers:
+        - name: wait-db
+          image: busybox:latest
+          command:
+            - /bin/sh
+            - -c
+            - until nc -z database 27017; do echo waiting for database; sleep 2; done
+      containers:
+        - name: events
+          image: ghcr.io/stoatchat/events:v0.11.1
+          ports:
+            - containerPort: 14703
+          volumeMounts:
+            - name: revolt-toml
+              mountPath: /Revolt.toml
+              subPath: Revolt.toml
+      volumes:
+        - name: revolt-toml
+          configMap:
+            name: revolt-toml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autumn
+  namespace: stoat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: autumn
+  template:
+    metadata:
+      labels:
+        app: autumn
+    spec:
+      initContainers:
+        - name: wait-db
+          image: busybox:latest
+          command:
+            - /bin/sh
+            - -c
+            - until nc -z database 27017; do echo waiting for database; sleep 2; done
+        - name: wait-minio
+          image: busybox:latest
+          command:
+            - /bin/sh
+            - -c
+            - until nc -z minio.minio.svc.cluster.local 9000; do echo waiting for minio; sleep 2; done
+      containers:
+        - name: autumn
+          image: ghcr.io/stoatchat/file-server:v0.11.1
+          ports:
+            - containerPort: 14704
+          volumeMounts:
+            - name: revolt-toml
+              mountPath: /Revolt.toml
+              subPath: Revolt.toml
+      volumes:
+        - name: revolt-toml
+          configMap:
+            name: revolt-toml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: january
+  namespace: stoat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: january
+  template:
+    metadata:
+      labels:
+        app: january
+    spec:
+      containers:
+        - name: january
+          image: ghcr.io/stoatchat/proxy:v0.11.1
+          ports:
+            - containerPort: 14705
+          volumeMounts:
+            - name: revolt-toml
+              mountPath: /Revolt.toml
+              subPath: Revolt.toml
+      volumes:
+        - name: revolt-toml
+          configMap:
+            name: revolt-toml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gifbox
+  namespace: stoat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gifbox
+  template:
+    metadata:
+      labels:
+        app: gifbox
+    spec:
+      containers:
+        - name: gifbox
+          image: ghcr.io/stoatchat/gifbox:v0.11.1
+          ports:
+            - containerPort: 14706
+          volumeMounts:
+            - name: revolt-toml
+              mountPath: /Revolt.toml
+              subPath: Revolt.toml
+      volumes:
+        - name: revolt-toml
+          configMap:
+            name: revolt-toml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crond
+  namespace: stoat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crond
+  template:
+    metadata:
+      labels:
+        app: crond
+    spec:
+      initContainers:
+        - name: wait-db
+          image: busybox:latest
+          command:
+            - /bin/sh
+            - -c
+            - until nc -z database 27017; do echo waiting for database; sleep 2; done
+      containers:
+        - name: crond
+          image: ghcr.io/stoatchat/crond:v0.11.1
+          volumeMounts:
+            - name: revolt-toml
+              mountPath: /Revolt.toml
+              subPath: Revolt.toml
+      volumes:
+        - name: revolt-toml
+          configMap:
+            name: revolt-toml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pushd
+  namespace: stoat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pushd
+  template:
+    metadata:
+      labels:
+        app: pushd
+    spec:
+      initContainers:
+        - name: wait-db
+          image: busybox:latest
+          command:
+            - /bin/sh
+            - -c
+            - until nc -z database 27017; do echo waiting for database; sleep 2; done
+        - name: wait-rabbit
+          image: busybox:latest
+          command:
+            - /bin/sh
+            - -c
+            - until nc -z rabbit 5672; do echo waiting for rabbit; sleep 2; done
+      containers:
+        - name: pushd
+          image: ghcr.io/stoatchat/pushd:v0.11.1
+          volumeMounts:
+            - name: revolt-toml
+              mountPath: /Revolt.toml
+              subPath: Revolt.toml
+      volumes:
+        - name: revolt-toml
+          configMap:
+            name: revolt-toml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voice-ingress
+  namespace: stoat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voice-ingress
+  template:
+    metadata:
+      labels:
+        app: voice-ingress
+    spec:
+      initContainers:
+        - name: wait-db
+          image: busybox:latest
+          command:
+            - /bin/sh
+            - -c
+            - until nc -z database 27017; do echo waiting for database; sleep 2; done
+        - name: wait-rabbit
+          image: busybox:latest
+          command:
+            - /bin/sh
+            - -c
+            - until nc -z rabbit 5672; do echo waiting for rabbit; sleep 2; done
+      containers:
+        - name: voice-ingress
+          image: ghcr.io/stoatchat/voice-ingress:v0.11.1
+          ports:
+            - containerPort: 8500
+          volumeMounts:
+            - name: revolt-toml
+              mountPath: /Revolt.toml
+              subPath: Revolt.toml
+      volumes:
+        - name: revolt-toml
+          configMap:
+            name: revolt-toml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: livekit
+  namespace: stoat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: livekit
+  template:
+    metadata:
+      labels:
+        app: livekit
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: livekit
+          image: ghcr.io/stoatchat/livekit-server:v1.9.6
+          args:
+            - --config
+            - /etc/livekit.yml
+          ports:
+            - containerPort: 7880
+            - containerPort: 7881
+          volumeMounts:
+            - name: livekit-config
+              mountPath: /etc/livekit.yml
+              subPath: livekit.yml
+      volumes:
+        - name: livekit-config
+          configMap:
+            name: livekit-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: stoat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: ghcr.io/stoatchat/for-web:addb6b7
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - secretRef:
+                name: env-web

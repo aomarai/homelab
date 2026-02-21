@@ -1,0 +1,62 @@
+# Configure in Cloudflare Zero Trust → Networks → Tunnels → [your tunnel] → Public Hostname:
+#
+#  stoat.example.com /        → http://web.stoat.svc.cluster.local:5000
+#  stoat.example.com /api     → http://api.stoat.svc.cluster.local:14702
+#  stoat.example.com /ws      → http://events.stoat.svc.cluster.local:14703   (enable WebSocket)
+#  stoat.example.com /autumn  → http://autumn.stoat.svc.cluster.local:14704
+#  stoat.example.com /january → http://january.stoat.svc.cluster.local:14705
+#  stoat.example.com /gifbox  → http://gifbox.stoat.svc.cluster.local:14706
+#  stoat.example.com /livekit → http://livekit.stoat.svc.cluster.local:7880   (enable WebSocket)
+#  stoat.example.com /ingress → http://voice-ingress.stoat.svc.cluster.local:8500
+#
+# For /ws and /livekit: in the tunnel config set "originRequest.noTLSVerify: true"
+# and ensure WebSocket proxying is enabled (it is by default in newer cloudflared).
+#
+# LiveKit UDP screenshare NOTE:
+#   Cloudflare Tunnel cannot proxy UDP. For screenshare/voice to work you must:
+#   1. Port-forward TCP 7881 and UDP 50000-50100 on your router to the node running LiveKit
+#   2. Add a DNS A record: stoat-livekit.example.com → your home IP (can be orange-cloud off or grey-cloud)
+#   3. Update Revolt.toml [api.livekit.nodes.worldwide] url to use your external IP or hostname for media
+#   LiveKit WebSocket signaling (/livekit path) still goes through the tunnel fine.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflared
+  namespace: stoat
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cloudflared
+  template:
+    metadata:
+      labels:
+        app: cloudflared
+    spec:
+      containers:
+        - name: cloudflared
+          image: cloudflare/cloudflared:latest
+          args:
+            - tunnel
+            - --no-autoupdate
+            - run
+          env:
+            - name: TUNNEL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflared-token
+                  key: token
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 50m
+            limits:
+              memory: 128Mi
+              cpu: 200m
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: 2000
+            initialDelaySeconds: 10
+            periodSeconds: 10
