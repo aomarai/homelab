@@ -1,0 +1,13 @@
+# TLS cert for stoat.homelab.local via your existing homelab-ca-issuer
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: stoat-tls
+  namespace: stoat
+spec:
+  secretName: stoat-tls
+  issuerRef:
+    name: homelab-ca-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - stoat.homelab.local

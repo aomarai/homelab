@@ -1,0 +1,73 @@
+# Matches your existing pattern from apps/minio/httproute.yaml
+# Attaches to the `homelab` Gateway in the `traefik` namespace
+
+# ── Main web frontend ─────────────────────────────────────────────
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: stoat-web
+  namespace: stoat
+spec:
+  parentRefs:
+    - name: homelab
+      namespace: traefik
+      sectionName: websecure
+  hostnames:
+    - stoat.homelab.local
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+      backendRefs:
+        - name: api
+          port: 14702
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /ws
+      backendRefs:
+        - name: events
+          port: 14703
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /autumn
+      backendRefs:
+        - name: autumn
+          port: 14704
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /january
+      backendRefs:
+        - name: january
+          port: 14705
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /gifbox
+      backendRefs:
+        - name: gifbox
+          port: 14706
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /livekit
+      backendRefs:
+        - name: livekit
+          port: 7880
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /ingress
+      backendRefs:
+        - name: voice-ingress
+          port: 8500
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: web
+          port: 5000

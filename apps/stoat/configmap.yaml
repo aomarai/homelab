@@ -1,0 +1,64 @@
+# Revolt.toml — update hostname, keys, and secrets before deploying
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: revolt-toml
+  namespace: stoat
+data:
+  Revolt.toml: |
+    [hosts]
+    app = "https://stoat.homelab.local"
+    api = "https://stoat.homelab.local/api"
+    events = "wss://stoat.homelab.local/ws"
+    autumn = "https://stoat.homelab.local/autumn"
+    january = "https://stoat.homelab.local/january"
+
+    [hosts.livekit]
+    worldwide = "wss://stoat.homelab.local/livekit"
+
+    [api.livekit.nodes.worldwide]
+    url = "http://livekit.stoat.svc.cluster.local:7880"
+    key = "${LIVEKIT_KEY}"
+    secret = "${LIVEKIT_SECRET}"
+
+    [pushd.vapid]
+    private_key = "${VAPID_PRIVATE_KEY}"
+    public_key = "${VAPID_PUBLIC_KEY}"
+
+    [files]
+    encryption_key = "${FILES_ENCRYPTION_KEY}"
+
+    [files.s3]
+    endpoint = "http://minio.minio.svc.cluster.local:9000"
+    region = "minio"
+    bucket = "revolt-uploads"
+    access_key_id = "stoat"
+    secret_access_key = "${MINIO_STOAT_PASSWORD}"
+---
+# LiveKit config — screenshare + voice
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: livekit-config
+  namespace: stoat
+data:
+  livekit.yml: |
+    rtc:
+      use_external_ip: true
+      port_range_start: 50000
+      port_range_end: 50100
+      tcp_port: 7881
+
+    redis:
+      address: redis.stoat.svc.cluster.local:6379
+
+    turn:
+      enabled: false
+
+    webhook:
+      api_key: ${LIVEKIT_KEY}
+      urls:
+        - http://voice-ingress.stoat.svc.cluster.local:8500/worldwide
+
+    keys:
+      ${LIVEKIT_KEY}: ${LIVEKIT_SECRET}
