@@ -17,6 +17,13 @@ prometheus:
             requests:
               storage: 10Gi
 
+prometheusOperator:
+  admissionWebhooks:
+    patch:
+      enabled: false
+    certManager:
+      enabled: true
+
 grafana:
   admin:
     existingSecret: grafana-credentials
