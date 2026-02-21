@@ -9,11 +9,11 @@
 #  stoat.example.com /livekit → http://livekit.stoat.svc.cluster.local:7880   (enable WebSocket)
 #  stoat.example.com /ingress → http://voice-ingress.stoat.svc.cluster.local:8500
 #
-# For /ws and /livekit: in the tunnel config set "originRequest.noTLSVerify: true"
-# and ensure WebSocket proxying is enabled (it is by default in newer cloudflared).
+# For /ws and /livekit: if you change the origins above to https://... in the tunnel config,
+# you may need to set "originRequest.noTLSVerify: true". Also ensure WebSocket proxying is
+# enabled (it is by default in newer cloudflared).
 #
 # LiveKit UDP screenshare NOTE:
-#   Cloudflare Tunnel cannot proxy UDP. For screenshare/voice to work you must:
 #   1. Port-forward TCP 7881 and UDP 50000-50100 on your router to the node running LiveKit
 #   2. Add a DNS A record: stoat-livekit.example.com → your home IP (can be orange-cloud off or grey-cloud)
 #   3. Update Revolt.toml [api.livekit.nodes.worldwide] url to use your external IP or hostname for media
