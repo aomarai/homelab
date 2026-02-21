@@ -18,7 +18,10 @@ prometheus:
               storage: 10Gi
 
 grafana:
-  adminPassword: "password"    # change this — but it's not a secret since no sensitive infra depends on it
+  admin:
+    existingSecret: grafana-credentials
+    userKey: adminUser
+    passwordKey: adminPassword
   resources:
     requests:
       memory: 128Mi
