@@ -562,6 +562,7 @@ spec:
     spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      enableServiceLinks: false
       initContainers:
         - name: config-init
           image: bhgedigital/envsubst

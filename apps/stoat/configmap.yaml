@@ -20,6 +20,8 @@ data:
     url = "http://livekit.stoat.svc.cluster.local:7880"
     key = "${LIVEKIT_KEY}"
     secret = "${LIVEKIT_SECRET}"
+    lat = 0.0
+    lon = 0.0
 
     [pushd.vapid]
     private_key = "${VAPID_PRIVATE_KEY}"
