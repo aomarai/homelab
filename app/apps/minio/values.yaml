@@ -1,0 +1,50 @@
+existingSecret: minio-credentials
+
+mode: standalone
+
+persistence:
+  enabled: true
+  storageClass: longhorn
+  size: 50Gi
+
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 100m
+  limits:
+    memory: 512Mi
+    cpu: 500m
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: storage
+              operator: NotIn
+              values:
+                - small
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: homelab-ca-issuer
+  hosts:
+    - minio.homelab.local
+  tls:
+    - secretName: minio-tls
+      hosts:
+        - minio.homelab.local
+
+consoleIngress:
+  enabled: true
+  ingressClassName: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: homelab-ca-issuer
+  hosts:
+    - minio-console.homelab.local
+  tls:
+    - secretName: minio-console-tls
+      hosts:
+        - minio-console.homelab.local
