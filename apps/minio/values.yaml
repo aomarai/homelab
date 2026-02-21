@@ -5,7 +5,7 @@ mode: standalone
 persistence:
   enabled: true
   storageClass: longhorn-2replicas
-  size: 50Gi
+  size: 30Gi
 
 resources:
   requests:
