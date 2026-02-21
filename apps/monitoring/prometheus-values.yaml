@@ -22,6 +22,8 @@ grafana:
     existingSecret: grafana-credentials
     userKey: adminUser
     passwordKey: adminPassword
+  deploymentStrategy:
+    type: Recreate
   resources:
     requests:
       memory: 128Mi
