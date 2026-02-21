@@ -144,6 +144,8 @@ spec:
           envFrom:
             - secretRef:
                 name: revolt-secrets
+            - secretRef:
+                name: rabbit-credentials
           env:
             - name: MINIO_STOAT_PASSWORD
               valueFrom:
@@ -197,6 +199,8 @@ spec:
           envFrom:
             - secretRef:
                 name: revolt-secrets
+            - secretRef:
+                name: rabbit-credentials
           env:
             - name: MINIO_STOAT_PASSWORD
               valueFrom:
@@ -253,6 +257,8 @@ spec:
           envFrom:
             - secretRef:
                 name: revolt-secrets
+            - secretRef:
+                name: rabbit-credentials
           env:
             - name: MINIO_STOAT_PASSWORD
               valueFrom:
@@ -303,6 +309,8 @@ spec:
           envFrom:
             - secretRef:
                 name: revolt-secrets
+            - secretRef:
+                name: rabbit-credentials
           env:
             - name: MINIO_STOAT_PASSWORD
               valueFrom:
@@ -353,6 +361,8 @@ spec:
           envFrom:
             - secretRef:
                 name: revolt-secrets
+            - secretRef:
+                name: rabbit-credentials
           env:
             - name: MINIO_STOAT_PASSWORD
               valueFrom:
@@ -406,6 +416,8 @@ spec:
           envFrom:
             - secretRef:
                 name: revolt-secrets
+            - secretRef:
+                name: rabbit-credentials
           env:
             - name: MINIO_STOAT_PASSWORD
               valueFrom:
@@ -460,6 +472,8 @@ spec:
           envFrom:
             - secretRef:
                 name: revolt-secrets
+            - secretRef:
+                name: rabbit-credentials
           env:
             - name: MINIO_STOAT_PASSWORD
               valueFrom:
@@ -514,6 +528,8 @@ spec:
           envFrom:
             - secretRef:
                 name: revolt-secrets
+            - secretRef:
+                name: rabbit-credentials
           env:
             - name: MINIO_STOAT_PASSWORD
               valueFrom:

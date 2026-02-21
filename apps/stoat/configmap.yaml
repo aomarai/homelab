@@ -36,6 +36,12 @@ data:
     bucket = "revolt-uploads"
     access_key_id = "stoat"
     secret_access_key = "${MINIO_STOAT_PASSWORD}"
+
+    [rabbit]
+    hostname = "rabbit"
+    port = 5672
+    username = "${RABBITMQ_DEFAULT_USER}"
+    password = "${RABBITMQ_DEFAULT_PASS}"
 ---
 # LiveKit config — screenshare + voice
 apiVersion: v1
