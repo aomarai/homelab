@@ -2,6 +2,9 @@ existingSecret: minio-credentials
 
 mode: standalone
 
+environment:
+  MINIO_BROWSER_REDIRECT_URL: https://minio-console.homelab.local
+
 persistence:
   enabled: true
   storageClass: longhorn-2replicas
@@ -26,25 +29,7 @@ affinity:
                 - small
 
 ingress:
-  enabled: true
-  ingressClassName: traefik
-  annotations:
-    cert-manager.io/cluster-issuer: homelab-ca-issuer
-  hosts:
-    - minio.homelab.local
-  tls:
-    - secretName: minio-tls
-      hosts:
-        - minio.homelab.local
+  enabled: false
 
 consoleIngress:
-  enabled: true
-  ingressClassName: traefik
-  annotations:
-    cert-manager.io/cluster-issuer: homelab-ca-issuer
-  hosts:
-    - minio-console.homelab.local
-  tls:
-    - secretName: minio-console-tls
-      hosts:
-        - minio-console.homelab.local
+  enabled: false
