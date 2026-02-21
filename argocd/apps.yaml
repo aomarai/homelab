@@ -62,44 +62,6 @@ spec:
     syncOptions:
       - CreateNamespace=true
 ---
-# cert-manager
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: cert-manager
-  namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  sources:
-    - repoURL: https://charts.jetstack.io
-      chart: cert-manager
-      targetRevision: "v1.17.1"
-      helm:
-        values: |
-          crds:
-            enabled: true
-          resources:
-            requests:
-              memory: 64Mi
-              cpu: 50m
-            limits:
-              memory: 128Mi
-              cpu: 100m
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      path: apps/cert-manager
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: cert-manager
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
----
 # Longhorn
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -132,6 +94,44 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: longhorn-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# cert-manager
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://charts.jetstack.io
+      chart: cert-manager
+      targetRevision: "v1.17.1"
+      helm:
+        values: |
+          crds:
+            enabled: true
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 50m
+            limits:
+              memory: 128Mi
+              cpu: 100m
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      path: apps/cert-manager
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cert-manager
   syncPolicy:
     automated:
       prune: true
