@@ -1,0 +1,61 @@
+deployment:
+  replicas: 2        # one per big node for redundancy
+
+providers:
+  kubernetesIngress:
+    enabled: false   # we're done with Ingress
+  kubernetesGateway:
+    enabled: true    # Gateway API is our routing layer now
+
+gateway:
+  enabled: false     # we'll create our own Gateway resource below
+
+service:
+  type: LoadBalancer
+  annotations: {}
+
+resources:
+  requests:
+    memory: 128Mi
+    cpu: 100m
+  limits:
+    memory: 256Mi
+    cpu: 200m
+
+tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: storage
+              operator: NotIn
+              values:
+                - small
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - traefik
+          topologyKey: kubernetes.io/hostname
+
+logs:
+  general:
+    level: INFO
+
+ports:
+  web:
+    redirectTo:
+      port: websecure    # force HTTP → HTTPS
+  websecure:
+    tls:
+      enabled: true

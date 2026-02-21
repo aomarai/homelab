@@ -33,17 +33,6 @@ grafana:
     enabled: true
     storageClassName: longhorn
     size: 5Gi
-  ingress:
-    enabled: true
-    ingressClassName: traefik
-    annotations:
-      cert-manager.io/cluster-issuer: homelab-ca-issuer
-    hosts:
-      - grafana.homelab.local
-    tls:
-      - secretName: grafana-tls
-        hosts:
-          - grafana.homelab.local
 
 alertmanager:
   alertmanagerSpec:

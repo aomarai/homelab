@@ -1,0 +1,33 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: minio
+  namespace: minio
+spec:
+  parentRefs:
+    - name: homelab
+      namespace: traefik
+      sectionName: websecure
+  hostnames:
+    - minio.homelab.local
+  rules:
+    - backendRefs:
+        - name: minio
+          port: 9000
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: minio-console
+  namespace: minio
+spec:
+  parentRefs:
+    - name: homelab
+      namespace: traefik
+      sectionName: websecure
+  hostnames:
+    - minio-console.homelab.local
+  rules:
+    - backendRefs:
+        - name: minio-console
+          port: 9001
