@@ -6,6 +6,27 @@ metadata:
   namespace: stoat
 data:
   Revolt.toml: |
+    [features.limits.default]
+    message_length = 4000
+    voice_quality = 16000
+    video = true
+    video_resolution = [1920, 1080]
+    video_aspect_ratio = [0.3, 2.5]
+
+    [features.limits.default.file_upload_size_limit]
+    # Maximum file size limits (in bytes)
+    attachments = 20_000_000
+    avatars = 4_000_000
+    backgrounds = 6_000_000
+    icons = 2_500_000
+    banners = 6_000_000
+    emojis = 500_000
+
+    [features.advanced]
+    # The max amount of messages the rabbitmq provider/db mention adder job will delay for before forcing handling of a channel.
+    # default: 5
+    process_message_delay_limit = 5
+
     [hosts]
     app = "https://stoat.homelab.local"
     api = "https://stoat.homelab.local/api"
