@@ -18,6 +18,8 @@ global:
         secretKeyRef:
           name: authentik-secrets
           key: postgres_password
+    - name: AUTHENTIK_REDIS__HOST
+      value: authentik-redis
 
 server:
   ingress:
@@ -53,9 +55,6 @@ worker:
       enabled: true
       interval: 30s
       scrapeTimeout: 3s
-
-redis:
-  enabled: true
 
 postgresql:
   enabled: true
