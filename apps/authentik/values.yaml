@@ -54,6 +54,9 @@ worker:
       interval: 30s
       scrapeTimeout: 3s
 
+redis:
+  enabled: true
+
 postgresql:
   enabled: true
   auth:
