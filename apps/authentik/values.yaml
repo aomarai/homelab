@@ -1,0 +1,63 @@
+authentik:
+  secret_key: ""
+  error_reporting:
+    enabled: false
+  log_level: info
+  postgresql:
+    password: ""
+
+global:
+  env:
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secret
+          key: secret_key
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secret
+          key: postgresql_password
+
+server:
+  ingress:
+    enabled: false
+
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 100m
+    limits:
+      memory: 1Gi
+      cpu: 500m
+
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      scrapeTimeout: 3s
+
+worker:
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+    limits:
+      memory: 512Mi
+      cpu: 250m
+
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      scrapeTimeout: 3s
+
+postgresql:
+  enabled: true
+  auth:
+    existingSecret: authentik-secret
+    secretKeys:
+      adminPasswordKey: postgresql_password
+      userPasswordKey: postgresql_password
