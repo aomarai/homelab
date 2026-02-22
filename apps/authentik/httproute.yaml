@@ -11,7 +11,7 @@ spec:
       namespace: traefik
       sectionName: websecure
   hostnames:
-    - authentik.homelab.local
+    - idm.homelab.local
   rules:
     - matches:
         - path:
