@@ -81,7 +81,8 @@ metadata:
 data:
   livekit.yml: |
     rtc:
-      use_external_ip: true
+      use_external_ip: false
+      node_ip: "192.168.1.152"
       port_range_start: 50000
       port_range_end: 50100
       tcp_port: 7881

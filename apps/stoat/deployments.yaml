@@ -606,6 +606,12 @@ spec:
             - containerPort: 7881
               protocol: TCP
               name: rtc-tcp
+            - containerPort: 50000
+              protocol: UDP
+              name: rtc-udp-start
+            - containerPort: 50100
+              protocol: UDP
+              name: rtc-udp-end
           volumeMounts:
             - name: livekit-config
               mountPath: /etc/livekit.yml
