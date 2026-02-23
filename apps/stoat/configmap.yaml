@@ -27,6 +27,11 @@ data:
     # default: 5
     process_message_delay_limit = 5
 
+    [api.registration]
+    # Whether an invite should be required for registration
+    # See https://github.com/revoltchat/self-hosted#making-your-instance-invite-only
+    invite_only = true
+
     [hosts]
     app = "https://stoat.homelab.local"
     api = "https://stoat.homelab.local/api"
