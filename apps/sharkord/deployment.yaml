@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sharkord
+  namespace: sharkord
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: sharkord
+  template:
+    metadata:
+      labels:
+        app: sharkord
+    spec:
+      # hostNetwork so WebRTC port 40000 is directly reachable on the node IP
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: sharkord
+          image: sharkord/sharkord:latest
+          ports:
+            - containerPort: 4991
+              protocol: TCP
+              name: http
+            - containerPort: 40000
+              protocol: TCP
+              name: webrtc-tcp
+            - containerPort: 40000
+              protocol: UDP
+              name: webrtc-udp
+          env:
+            - name: SHARKORD_PORT
+              value: "4991"
+            - name: SHARKORD_WEBRTC_PORT
+              value: "40000"
+            # Announce the node's LAN IP so WebRTC ICE candidates are reachable
+            - name: SHARKORD_WEBRTC_ANNOUNCED_ADDRESS
+              value: "192.168.1.152"
+          volumeMounts:
+            - name: data
+              mountPath: /root/.config/sharkord
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: sharkord-data

@@ -354,6 +354,30 @@ spec:
     syncOptions:
       - CreateNamespace=true
 ---
+# Sharkord self-hosted
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sharkord
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/aomarai/homelab.git
+    targetRevision: HEAD
+    path: apps/sharkord
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sharkord
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
 # Stoat self-hosted
 apiVersion: argoproj.io/v1alpha1
 kind: Application

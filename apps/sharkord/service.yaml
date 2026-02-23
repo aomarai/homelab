@@ -1,0 +1,14 @@
+# ClusterIP for Traefik HTTPRoute (HTTP + WebSocket)
+apiVersion: v1
+kind: Service
+metadata:
+  name: sharkord
+  namespace: sharkord
+spec:
+  selector:
+    app: sharkord
+  ports:
+    - name: http
+      port: 4991
+      targetPort: 4991
+      protocol: TCP
