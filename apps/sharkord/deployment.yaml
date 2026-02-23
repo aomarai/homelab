@@ -18,6 +18,8 @@ spec:
       # hostNetwork so WebRTC port 40000 is directly reachable on the node IP
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      # Pin to master-three so port 40000 forward target (192.168.1.154) is stable
+      nodeName: master-three
       containers:
         - name: sharkord
           image: sharkord/sharkord:latest
