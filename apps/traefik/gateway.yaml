@@ -32,3 +32,16 @@ spec:
         certificateRefs:
           - name: homelab-tls
             namespace: traefik
+    # Public listener for internet-facing services with LE certs
+    - name: sharkord-public
+      protocol: HTTPS
+      port: 8443
+      hostname: sharkord.ashworks.net
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: sharkord-tls
+            namespace: traefik

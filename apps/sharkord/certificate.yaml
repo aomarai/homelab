@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: sharkord-tls
+  # Must be in the same namespace as the Gateway so Traefik can read the Secret
+  namespace: traefik
+spec:
+  secretName: sharkord-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - sharkord.ashworks.net

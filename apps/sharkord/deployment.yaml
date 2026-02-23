@@ -36,9 +36,9 @@ spec:
               value: "4991"
             - name: SHARKORD_WEBRTC_PORT
               value: "40000"
-            # Announce the node's LAN IP so WebRTC ICE candidates are reachable
+            # Announce the public hostname so remote WebRTC ICE candidates resolve correctly
             - name: SHARKORD_WEBRTC_ANNOUNCED_ADDRESS
-              value: "192.168.1.152"
+              value: "sharkord.ashworks.net"
           volumeMounts:
             - name: data
               mountPath: /root/.config/sharkord

@@ -7,9 +7,9 @@ spec:
   parentRefs:
     - name: homelab
       namespace: traefik
-      sectionName: websecure
+      sectionName: sharkord-public
   hostnames:
-    - sharkord.homelab.local
+    - sharkord.ashworks.net
   rules:
     - matches:
         - path:

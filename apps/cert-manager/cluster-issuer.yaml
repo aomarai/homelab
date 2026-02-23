@@ -29,3 +29,23 @@ metadata:
 spec:
   ca:
     secretName: homelab-ca-secret
+---
+# Let's Encrypt — for internet-facing services
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    email: ashkanomaraie@icloud.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-prod-account-key
+    solvers:
+      - http01:
+          gatewayHTTPRoute:
+            parentRefs:
+              - name: homelab
+                namespace: traefik
+                kind: Gateway
+                group: gateway.networking.k8s.io
