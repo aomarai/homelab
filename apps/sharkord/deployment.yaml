@@ -38,9 +38,9 @@ spec:
               value: "4991"
             - name: SHARKORD_WEBRTC_PORT
               value: "40000"
-            # Announce the public hostname so remote WebRTC ICE candidates resolve correctly
+            # Announce the public IP so mediasoup ICE candidates are reachable
             - name: SHARKORD_WEBRTC_ANNOUNCED_ADDRESS
-              value: "sharkord.ashworks.net"
+              value: "73.208.230.104"
           volumeMounts:
             - name: data
               mountPath: /root/.config/sharkord
