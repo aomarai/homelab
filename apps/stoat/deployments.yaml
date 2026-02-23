@@ -5,7 +5,7 @@ metadata:
   name: database
   namespace: stoat
 spec:
-  replicas: 1
+  replicas: 0
   strategy:
     type: Recreate
   selector:
@@ -56,7 +56,7 @@ metadata:
   name: redis
   namespace: stoat
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: redis
@@ -78,7 +78,7 @@ metadata:
   name: rabbit
   namespace: stoat
 spec:
-  replicas: 1
+  replicas: 0
   strategy:
     type: Recreate
   selector:
@@ -126,7 +126,7 @@ metadata:
   name: api
   namespace: stoat
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: api
@@ -184,7 +184,7 @@ metadata:
   name: events
   namespace: stoat
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: events
@@ -239,7 +239,7 @@ metadata:
   name: autumn
   namespace: stoat
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: autumn
@@ -297,7 +297,7 @@ metadata:
   name: january
   namespace: stoat
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: january
@@ -349,7 +349,7 @@ metadata:
   name: gifbox
   namespace: stoat
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: gifbox
@@ -401,7 +401,7 @@ metadata:
   name: crond
   namespace: stoat
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: crond
@@ -454,7 +454,7 @@ metadata:
   name: pushd
   namespace: stoat
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: pushd
@@ -510,7 +510,7 @@ metadata:
   name: voice-ingress
   namespace: stoat
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: voice-ingress
@@ -571,7 +571,7 @@ metadata:
   name: livekit
   namespace: stoat
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: livekit
@@ -630,7 +630,7 @@ metadata:
   name: web
   namespace: stoat
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: web
