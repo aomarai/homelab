@@ -6,6 +6,8 @@ metadata:
   namespace: stoat
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: database
@@ -77,6 +79,8 @@ metadata:
   namespace: stoat
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: rabbit
