@@ -189,6 +189,10 @@ spec:
         - /spec/preserveUnknownFields
         - /metadata/annotations
         - /spec/conversion
+    - group: ""
+      kind: PersistentVolumeClaim
+      jsonPointers:
+        - /spec/volumeName
   syncPolicy:
     automated:
       prune: true
