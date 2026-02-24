@@ -1,6 +1,32 @@
 config:
   clients:
-    - url: http://loki:3100/loki/api/v1/push
+    - url: http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push
+
+  snippets:
+    pipelineStages:
+      # Extract log level from common formats
+      - match:
+          selector: '{namespace=~"stoat|sharkord|authentik|idm|monitoring|argocd"}'
+          stages:
+            # Try JSON log level
+            - json:
+                expressions:
+                  level: level
+                  lvl: lvl
+                  severity: severity
+            - labels:
+                level:
+                lvl:
+                severity:
+            # Fall back to regex for plain-text levels
+            - regex:
+                expression: '(?i)(?P<log_level>debug|info|warn(?:ing)?|error|fatal|critical)'
+            - labels:
+                log_level:
+      # Drop noisy health check / readiness probe logs
+      - drop:
+          expression: '(?i)(GET /health|GET /ready|GET /live|readiness|liveness)'
+          drop_counter_reason: health_check
 
 resources:
   requests:
