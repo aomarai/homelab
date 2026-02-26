@@ -22,7 +22,7 @@ spec:
       nodeName: master-three
       containers:
         - name: sharkord
-          image: sharkord/sharkord:latest
+          image: sharkord/sharkord:v0.0.7
           ports:
             - containerPort: 4991
               protocol: TCP
