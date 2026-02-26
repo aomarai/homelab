@@ -23,6 +23,7 @@ spec:
       containers:
         - name: sharkord
           image: sharkord/sharkord:v0.0.7
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 4991
               protocol: TCP
