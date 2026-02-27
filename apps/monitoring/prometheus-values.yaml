@@ -1,6 +1,7 @@
 prometheus:
   prometheusSpec:
     retention: 7d
+    retentionSize: 8GB
     resources:
       requests:
         memory: 512Mi
