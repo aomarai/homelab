@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: manyfold
+  namespace: manyfold
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: manyfold
+  template:
+    metadata:
+      labels:
+        app: manyfold
+    spec:
+      containers:
+        - name: manyfold
+          image: ghcr.io/manyfold3d/manyfold-solo:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3214
+              protocol: TCP
+              name: http
+          env:
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: key-base
+                  key: SECRET_KEY_BASE
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 50m
+            limits:
+              memory: 512Mi
+              cpu: 1
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: manyfold-data

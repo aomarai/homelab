@@ -1,0 +1,25 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: manyfold
+  namespace: manyfold
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: homelab
+      namespace: traefik
+      sectionName: websecure
+  hostnames:
+    - print.homelab.local
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: manyfold
+          port: 3214
+          weight: 1
