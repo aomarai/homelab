@@ -20,6 +20,6 @@ spec:
       backendRefs:
         - group: ""
           kind: Service
-          name: peek
+          name: http
           port: 6969
           weight: 1
