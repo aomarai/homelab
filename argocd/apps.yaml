@@ -405,3 +405,27 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+---
+# Manyfold
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: manyfold
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/aomarai/homelab.git
+    targetRevision: HEAD
+    path: apps/manyfold
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: manyfold
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
