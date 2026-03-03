@@ -9,6 +9,6 @@ spec:
     app: peek
   ports:
     - name: http
-      port: 6969
+      port: 80
       targetPort: 6969
       protocol: TCP
