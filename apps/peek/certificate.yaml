@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: peek-tls
+  namespace: peek
+spec:
+  secretName: peek-tls
+  issuerRef:
+    name: homelab-ca-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - peek.homelab.local

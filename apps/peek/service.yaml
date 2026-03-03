@@ -1,0 +1,14 @@
+# ClusterIP for Traefik HTTPRoute (HTTP + WebSocket)
+apiVersion: v1
+kind: Service
+metadata:
+  name: peek
+  namespace: peek
+spec:
+  selector:
+    app: peek
+  ports:
+    - name: http
+      port: 6969
+      targetPort: 6969
+      protocol: TCP

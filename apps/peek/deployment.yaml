@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peek
+  namespace: peek
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: peek
+  template:
+    metadata:
+      labels:
+        app: peek
+    spec:
+      containers:
+        - name: peek
+          image: carrotwaxr/peek-stash-browser:3.3
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6969
+              protocol: TCP
+              name: http
+          env:
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt
+                  key: JWT-SECRET
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: peek-data
