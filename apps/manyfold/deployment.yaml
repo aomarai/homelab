@@ -34,8 +34,8 @@ spec:
               memory: 64Mi
               cpu: 50m
             limits:
-              memory: 1Gi
-              cpu: 1
+              memory: 2Gi
+              cpu: 2
           volumeMounts:
             - name: data
               mountPath: /app/data
