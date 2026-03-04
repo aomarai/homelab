@@ -50,7 +50,7 @@ metadata:
   name: postgresql
   namespace: manyfold
   labels:
-    app: postgresql
+    app: manyfold
 spec:
   serviceName: "postgresql"
   replicas: 1
