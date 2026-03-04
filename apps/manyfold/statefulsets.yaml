@@ -30,6 +30,20 @@ spec:
                 secretKeyRef:
                   name: key-base
                   key: SECRET_KEY_BASE
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-credentials
+                  key: POSTGRES_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-credentials
+                  key: POSTGRES_PASSWORD
+            - name: DATABASE_URL
+              value: postgres://$(DB_USER):$(DB_PASSWORD)@postgresql:5432/manyfold
+            - name: REDIS_URL
+              value: redis://redis:6379/1
           resources:
             requests:
               memory: 64Mi
