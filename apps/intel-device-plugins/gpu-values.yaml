@@ -1,0 +1,19 @@
+name: gpudeviceplugin
+sharedDevNum: 1
+logLevel: 2
+resourceManager: false
+enableMonitoring: true
+allocationPolicy: "none"
+nodeFeatureRule: true
+
+# Only schedule on nodes that NFD has confirmed have an Intel GPU
+nodeSelector:
+  intel.feature.node.kubernetes.io/gpu: "true"
+
+resources:
+  requests:
+    memory: 64Mi
+    cpu: 50m
+  limits:
+    memory: 128Mi
+    cpu: 100m
