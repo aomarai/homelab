@@ -1,14 +1,14 @@
 deployment:
-  replicas: 2        # one per big node for redundancy
+  replicas: 3
 
 providers:
   kubernetesIngress:
-    enabled: false   # we're done with Ingress
+    enabled: false # ingress is deprecated
   kubernetesGateway:
-    enabled: true    # Gateway API is our routing layer now
+    enabled: true
 
 gateway:
-  enabled: false     # we'll create our own Gateway resource below
+  enabled: false
 
 service:
   type: LoadBalancer
