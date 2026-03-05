@@ -52,7 +52,7 @@ spec:
               memory: 2Gi
               cpu: 2
           volumeMounts:
-            - name: data # Matches the name in volumeClaimTemplates below
+            - name: data
               mountPath: /app/data
   volumeClaimTemplates:
   - metadata:
@@ -99,7 +99,6 @@ spec:
         volumeMounts:
         - name: postgresql-storage 
           mountPath: /var/lib/postgresql/data
-      # DO NOT include a "volumes:" section here anymore
   volumeClaimTemplates: 
   - metadata:
       name: postgresql-storage
