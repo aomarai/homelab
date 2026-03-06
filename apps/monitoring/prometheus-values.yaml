@@ -96,6 +96,12 @@ alertmanager:
           resources:
             requests:
               storage: 5Gi
+    env:
+      - name: DISCORD_WEBHOOK_URL
+        valueFrom:
+          secretKeyRef:
+            name: alertmanager-discord
+            key: webhook-url
   config:
     global:
       resolve_timeout: 5m
@@ -117,9 +123,7 @@ alertmanager:
       - name: blackhole
       - name: discord
         webhook_configs:
-          - url_secret:
-              name: alertmanager-discord
-              key: webhook-url
+          - url: "$(DISCORD_WEBHOOK_URL)"
             send_resolved: true
     inhibit_rules:
       - equal: [namespace, alertname]
