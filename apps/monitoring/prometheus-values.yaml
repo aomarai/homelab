@@ -1,3 +1,10 @@
+prometheusOperator:
+  admissionWebhooks:
+    patch:
+      enabled: false
+    certManager:
+      enabled: true
+
 prometheus:
   prometheusSpec:
     retention: 7d
@@ -18,12 +25,28 @@ prometheus:
             requests:
               storage: 10Gi
 
-prometheusOperator:
-  admissionWebhooks:
-    patch:
-      enabled: false
-    certManager:
-      enabled: true
+  additionalPrometheusRulesMap:
+    homelab-rules:
+      groups:
+        - name: homelab.rules
+          rules:
+            - alert: PodCrashLooping
+              expr: rate(kube_pod_container_status_restarts_total[15m]) * 60 * 5 > 0
+              for: 5m
+              labels:
+                severity: critical
+              annotations:
+                summary: "Pod {{ $labels.namespace }}/{{ $labels.pod }} is crash looping"
+                description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is restarting frequently."
+
+            - alert: NodeDown
+              expr: up{job="node-exporter"} == 0
+              for: 2m
+              labels:
+                severity: critical
+              annotations:
+                summary: "Node {{ $labels.instance }} is down"
+                description: "Node {{ $labels.instance }} has been unreachable for more than 2 minutes."
 
 grafana:
   admin:
@@ -73,3 +96,46 @@ alertmanager:
           resources:
             requests:
               storage: 5Gi
+  config:
+    global:
+      resolve_timeout: 5m
+    templates: []
+    route:
+      group_by: ['namespace', 'alertname']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+      receiver: discord
+      routes:
+        - matchers:
+            - alertname = "Watchdog"
+          receiver: blackhole
+        - matchers:
+            - alertname = "InfoInhibitor"
+          receiver: blackhole
+    receivers:
+      - name: blackhole
+      - name: discord
+        webhook_configs:
+          - url_secret:
+              name: alertmanager-discord
+              key: webhook-url
+            send_resolved: true
+    inhibit_rules:
+      - equal: [namespace, alertname]
+        source_matchers:
+          - severity = critical
+        target_matchers:
+          - severity =~ warning|info
+      - equal: [namespace, alertname]
+        source_matchers:
+          - severity = warning
+        target_matchers:
+          - severity = info
+      - equal: [namespace]
+        source_matchers:
+          - alertname = InfoInhibitor
+        target_matchers:
+          - severity = info
+      - target_matchers:
+          - alertname = InfoInhibitor
