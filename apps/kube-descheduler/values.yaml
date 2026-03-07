@@ -1,0 +1,5 @@
+rbac:
+  additionalRules:
+    - apiGroups: [""]
+      resources: ["persistentvolumeclaims"]
+      verbs: ["get", "list", "watch"]
