@@ -490,3 +490,35 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+---
+# Kube Descheduler
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-descheduler
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://kubernetes-sigs.github.io/descheduler/
+      chart: descheduler
+      targetRevision: 0.35.0
+      helm:
+        valueFiles:
+          - $values/apps/kube-descheduler/values.yaml
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
