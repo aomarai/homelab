@@ -16,6 +16,13 @@ spec:
       labels:
         app: manyfold
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
       containers:
         - name: manyfold
           image: ghcr.io/manyfold3d/manyfold:latest
