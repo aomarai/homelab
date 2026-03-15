@@ -526,7 +526,7 @@ spec:
     syncOptions:
       - CreateNamespace=true
 ---
-# Media stack - arr apps, NFS, Seerr, Doplarr, FlareSolverr
+# Media stack prereqs
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -567,7 +567,7 @@ spec:
   sources:
     - repoURL: https://pabloromeo.github.io/clusterplex
       chart: clusterplex
-      targetRevision: "1.4.16"
+      targetRevision: "1.1.10"
       helm:
         valueFiles:
           - $values/apps/clusterplex/values.yaml
@@ -577,6 +577,162 @@ spec:
     - repoURL: https://github.com/aomarai/homelab.git
       targetRevision: HEAD
       path: apps/clusterplex
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: media
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# Sonarr
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sonarr
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      path: apps/sonarr
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: media
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# Radarr
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: radarr
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      path: apps/radarr
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: media
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# Prowlarr
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prowlarr
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      path: apps/prowlarr
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: media
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# Seerr
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: seerr
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      path: apps/seerr
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: media
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# Dopplarr
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dopplarr
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      path: apps/dopplarr
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: media
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# Flaresolverr
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flaresolverr
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      path: apps/flaresolverr
   destination:
     server: https://kubernetes.default.svc
     namespace: media
