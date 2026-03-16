@@ -22,22 +22,15 @@ spec:
             - name: DISCORD__TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: doplarr-credentials
+                  name: discord-token
                   key: DISCORD__TOKEN
-            - name: SONARR__API
+            - name: OVERSEERR__API
               valueFrom:
                 secretKeyRef:
-                  name: doplarr-credentials
-                  key: SONARR__API
-            - name: RADARR__API
-              valueFrom:
-                secretKeyRef:
-                  name: doplarr-credentials
-                  key: RADARR__API
-            - name: SONARR__URL
-              value: http://sonarr.media.svc.cluster.local:8989
-            - name: RADARR__URL
-              value: http://radarr.media.svc.cluster.local:7878
+                  name: seerr-token
+                  key: SEERR__API
+            - name: OVERSEERR__URL
+              value: http://seerr.media.svc.cluster.local:5055
             - name: DISCORD__MAX_RESULTS
               value: "25"
             - name: PARTIAL_SEASONS
