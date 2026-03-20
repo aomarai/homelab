@@ -742,3 +742,29 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+---
+# Bookshelf
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bookshelf
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      path: apps/bookshelf
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: media
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
