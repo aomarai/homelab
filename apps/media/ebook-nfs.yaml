@@ -15,6 +15,12 @@ spec:
     - nfsvers=4
     - hard
     - intr
+    - timeo=600       # wait 60 seconds before retrying
+    - retrans=5       # retry 5 times before giving up
+    - rsize=131072    # read buffer size
+    - wsize=131072    # write buffer size
+    - noatime         # don't update access times, reduces NFS chatter
+    - nodiratime
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
