@@ -17,6 +17,8 @@ loki:
           period: 24h
   limits_config:
     retention_period: 168h
+    ingestion_rate_mb: 8
+    ingestion_burst_size_mb: 16
   compactor:
     retention_enabled: true
     compaction_interval: 10m
@@ -47,3 +49,15 @@ chunksCache:
   enabled: false
 resultsCache:
   enabled: false
+
+lokiCanary:
+  enabled: true
+
+# Self-monitoring so you can see Loki's own metrics in Grafana
+monitoring:
+  selfMonitoring:
+    enabled: false
+  serviceMonitor:
+    enabled: true     # scrape Loki metrics into Prometheus
+    labels:
+      release: kube-prometheus-stack

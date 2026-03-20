@@ -66,6 +66,17 @@ grafana:
     enabled: true
     storageClassName: longhorn
     size: 5Gi
+
+  # Sidecar picks up dashboard ConfigMaps automatically
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+      searchNamespace: ALL    # look in all namespaces
+    datasources:
+      enabled: true
+
   additionalDataSources:
     - name: Loki
       type: loki
@@ -73,11 +84,44 @@ grafana:
       access: proxy
       isDefault: false
       jsonData:
-        maxLines: 1000
+        maxLines: 5000
+        timeout: 60
         derivedFields:
           - name: TraceID
             matcherRegex: '(?:trace_id|traceID)=(\w+)'
             url: '$${__value.raw}'
+
+  # Import community dashboards by ID
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: default
+          orgId: 1
+          folder: ''
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+
+  dashboards:
+    default:
+      # Loki & Promtail overview
+      loki-logs:
+        gnetId: 13639
+        revision: 2
+        datasource: Loki
+      # Kubernetes cluster logs
+      kubernetes-logs:
+        gnetId: 15141
+        revision: 1
+        datasource: Loki
+      # Promtail metrics
+      promtail-metrics:
+        gnetId: 15140
+        revision: 1
+        datasource: Prometheus
 
 alertmanager:
   alertmanagerSpec:
