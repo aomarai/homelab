@@ -24,6 +24,11 @@ global:
 server:
   ingress:
     enabled: false
+  env:
+    - name: AUTHENTIK_HOST
+      value: "https://auth.ashworks.net"
+    - name: AUTHENTIK_HOST_BROWSER
+      value: "https://auth.ashworks.net"
 
   resources:
     requests:
