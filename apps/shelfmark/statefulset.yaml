@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: shelfmark
+  namespace: media
+spec:
+  replicas: 1
+  serviceName: shelfmark
+  selector:
+    matchLabels:
+      app: shelfmark
+  template:
+    metadata:
+      labels:
+        app: shelfmark
+    spec:
+      containers:
+        - name: shelfmark
+          image: ghcr.io/calibrain/shelfmark:latest
+          ports:
+            - containerPort: 8084
+          env:
+            - name: PUID
+              value: "99"
+            - name: PGID
+              value: "100"
+            - name: TZ
+              value: America/Chicago
+            - name: EXT_BYPASSER_URL
+              value: http://flaresolverr.media.svc.cluster.local:8191
+            - name: EXT_BYPASSER_PATH
+              value: /v1
+            - name: EXT_BYPASSER_TIMEOUT
+              value: "60000"
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 100m
+            limits:
+              memory: 512Mi
+              cpu: 500m
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: ebooks
+              mountPath: /books
+              subPath: ingest        # downloads land in the CWA ingest folder
+      volumes:
+        - name: ebooks
+          persistentVolumeClaim:
+            claimName: ebook-nfs
+  volumeClaimTemplates:
+    - metadata:
+        name: config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 2Gi

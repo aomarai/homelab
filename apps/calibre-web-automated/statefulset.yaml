@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: calibre-web-automated
+  namespace: media
+spec:
+  replicas: 1
+  serviceName: calibre-web-automated
+  selector:
+    matchLabels:
+      app: calibre-web-automated
+  template:
+    metadata:
+      labels:
+        app: calibre-web-automated
+    spec:
+      containers:
+        - name: calibre-web-automated
+          image: crocodilestick/calibre-web-automated:latest
+          ports:
+            - containerPort: 8083
+          env:
+            - name: PUID
+              value: "99"
+            - name: PGID
+              value: "100"
+            - name: TZ
+              value: America/Chicago
+            - name: NETWORK_SHARE_MODE
+              value: "true"
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 100m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: ebooks
+              mountPath: /calibre-library
+              subPath: library
+            - name: ebooks
+              mountPath: /cwa-book-ingest
+              subPath: ingest
+      volumes:
+        - name: ebooks
+          persistentVolumeClaim:
+            claimName: ebook-nfs
+  volumeClaimTemplates:
+    - metadata:
+        name: config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 5Gi
