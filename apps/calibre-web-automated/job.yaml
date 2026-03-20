@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: calibre-library-init
+  namespace: media
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: calibre-init
+          image: ghcr.io/linuxserver/calibre:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              if [ ! -f /library/metadata.db ]; then
+                echo "Initializing Calibre library..."
+                calibredb add --library-path /library --empty || true
+                echo "Done"
+              else
+                echo "Library already exists, skipping"
+              fi
+          env:
+            - name: PUID
+              value: "99"
+            - name: PGID
+              value: "100"
+          volumeMounts:
+            - name: ebooks
+              mountPath: /library
+              subPath: library
+      volumes:
+        - name: ebooks
+          persistentVolumeClaim:
+            claimName: ebook-nfs
