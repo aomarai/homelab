@@ -29,6 +29,13 @@ server:
       value: "https://auth.ashworks.net"
     - name: AUTHENTIK_HOST_BROWSER
       value: "https://auth.ashworks.net"
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: authentik-data
+  volumeMounts:
+    - name: data
+      mountPath: /data
 
   resources:
     requests:
@@ -60,6 +67,14 @@ worker:
       enabled: true
       interval: 30s
       scrapeTimeout: 3s
+  
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: authentik-data
+  volumeMounts:
+    - name: data
+      mountPath: /data
 
 postgresql:
   enabled: true
