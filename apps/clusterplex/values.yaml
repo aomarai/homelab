@@ -64,6 +64,8 @@ worker:
   replicaCount: 2
   nodeSelector:
     intel.feature.node.kubernetes.io/gpu: "true"
+  securityContext:
+    privileged: true
   env:
     TZ: America/Chicago
     PUID: "99"
@@ -73,15 +75,26 @@ worker:
     LISTENING_PORT: "3501"
     STAT_CPU_INTERVAL: "10000"
     EAE_SUPPORT: "1"
-    FFMPEG_HWACCEL: vaapi      # enables Intel QSV hardware transcoding
+    FFMPEG_HWACCEL: vaapi
+    VAAPI_DEVICE: /dev/dri/renderD128    # Intel iGPU render node
   resources:
     requests:
       memory: 128Mi
       cpu: 500m
+      gpu.intel.com/i915: "1"
     limits:
       memory: 2Gi
+      cpu: 2000m
       gpu.intel.com/i915: "1"
   tolerations:
     - key: node-role.kubernetes.io/control-plane
       operator: Exists
       effect: NoSchedule
+  extraVolumes:
+    - name: dri
+      hostPath:
+        path: /dev/dri
+        type: Directory
+  extraVolumeMounts:
+    - name: dri
+      mountPath: /dev/dri
