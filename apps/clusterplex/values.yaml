@@ -27,7 +27,11 @@ pms:
     TRANSCODER_VERBOSE: "1"
     LOCAL_RELAY_ENABLED: "1"
     LOCAL_RELAY_PORT: "32499"
-    PLEX_CLAIM: ""              # get from plex.tv/claim, only needed on first run
+  envValueFrom:
+    PLEX_CLAIM:
+      secretKeyRef:
+        name: plex-claim  # The name of your existing K8s Secret
+        key: PLEX_CLAIM
   resources:
     requests:
       memory: 256Mi
