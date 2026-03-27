@@ -30,10 +30,10 @@ pms:
     PLEX_CLAIM: ""              # get from plex.tv/claim, only needed on first run
   resources:
     requests:
-      memory: 1Gi
+      memory: 256Mi
       cpu: 500m
     limits:
-      memory: 4Gi
+      memory: 2Gi
       cpu: 2000m
   configVolume:
     enabled: true
@@ -73,11 +73,10 @@ worker:
     FFMPEG_HWACCEL: vaapi      # enables Intel QSV hardware transcoding
   resources:
     requests:
-      memory: 512Mi
+      memory: 128Mi
       cpu: 500m
     limits:
       memory: 2Gi
-      cpu: 2000m
       gpu.intel.com/i915: "1"
   tolerations:
     - key: node-role.kubernetes.io/control-plane
