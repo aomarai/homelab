@@ -27,10 +27,9 @@ pms:
     TRANSCODER_VERBOSE: "1"
     LOCAL_RELAY_ENABLED: "1"
     LOCAL_RELAY_PORT: "32499"
-  envValueFrom:
     PLEX_CLAIM:
       secretKeyRef:
-        name: plex-claim  # The name of your existing K8s Secret
+        name: plex-claim
         key: PLEX_CLAIM
   resources:
     requests:
