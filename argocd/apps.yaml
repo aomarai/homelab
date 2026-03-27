@@ -89,13 +89,13 @@ spec:
   sources:
     - repoURL: https://charts.longhorn.io
       chart: longhorn
-      targetRevision: "1.7.3"
+      targetRevision: "1.11.1"
       helm:
         values: |
           preUpgradeChecker:
             jobEnabled: false
           defaultSettings:
-            defaultReplicaCount: 2
+            defaultClassReplicaCount: 2
             storageMinimalAvailablePercentage: 15
           resources:
             requests:
