@@ -4,4 +4,4 @@ rbac:
       resources: ["persistentvolumeclaims"]
       verbs: ["get", "list", "watch"]
 ttlSecondsAfterFinished: 5
-schedule: 5-59/10 * * * *
+schedule: 0 * * * *
