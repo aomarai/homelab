@@ -17,6 +17,12 @@ spec:
         - path:
             type: PathPrefix
             value: /
+    - filters:
+      - type: ExtensionRef
+        extensionRef:
+          group: traefik.io
+          kind: Middleware
+          name: calibre-headers
       backendRefs:
         - name: calibre-web-automated
           port: 8083
@@ -40,6 +46,12 @@ spec:
         - path:
             type: PathPrefix
             value: /
+    - filters:
+      - type: ExtensionRef
+        extensionRef:
+          group: traefik.io
+          kind: Middleware
+          name: calibre-headers
       backendRefs:
         - name: calibre-web-automated
           port: 8083
