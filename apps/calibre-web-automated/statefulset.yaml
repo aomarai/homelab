@@ -27,14 +27,7 @@ spec:
             - name: TZ
               value: America/Chicago
             - name: NETWORK_SHARE_MODE
-              value: "true"
-          resources:
-            requests:
-              memory: 256Mi
-              cpu: 100m
-            limits:
-              memory: 1Gi
-              cpu: 1000m
+              value: "false"
           volumeMounts:
             - name: config
               mountPath: /config
@@ -44,10 +37,6 @@ spec:
             - name: ebooks
               mountPath: /cwa-book-ingest
               subPath: ingest
-      volumes:
-        - name: ebooks
-          persistentVolumeClaim:
-            claimName: ebook-nfs
   volumeClaimTemplates:
     - metadata:
         name: config
@@ -57,3 +46,11 @@ spec:
         resources:
           requests:
             storage: 5Gi
+    - metadata:
+        name: ebooks
+      spec:
+        accessModes: ["ReadWriteOnce"] # Local storage is usually RWO
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 10Gi
