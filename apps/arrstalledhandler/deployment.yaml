@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: arrstalledhandler
-          image: ghcr.io/arrstalledhandler/arrstalledhandler:latest
+          image: tommythebeast/arrstalledhandler:1.1.3
           env:
             - name: RADARR_URL
               value: https://radarr
