@@ -46,12 +46,3 @@ spec:
             limits:
               memory: 64Mi
               cpu: 500m
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: arrstalledhandler
-  namespace: media
-spec:
-  selector:
-    app: arrstalledhandler
