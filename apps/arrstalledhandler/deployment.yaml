@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arrstalledhandler
+  namespace: media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: arrstalledhandler
+  template:
+    metadata:
+      labels:
+        app: arrstalledhandler
+    spec:
+      containers:
+        - name: arrstalledhandler
+          image: ghcr.io/arrstalledhandler/arrstalledhandler:latest
+          env:
+            - name: RADARR_URL
+              value: https://radarr
+            - name: RADARR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: arr-creds
+                  key: RADARR_API_KEY
+            - name: SONARR_URL
+              value: https://sonarr
+            - name: SONARR_API_KEY
+              valueFrom:
+                  secretKeyRef:
+                    name: arr-creds
+                    key: SONARR_API_KEY
+            - name: STALLED_TIMEOUT
+              value: 3600
+            - name: VERBOSE
+              value: false
+            - name: RUN_INTERVAL
+              value: 600
+            - name: COUNT_DOWNLOADING_METADATA_AS_STALLED
+              value: false
+          resources:
+            requests:
+              memory: 32Mi
+              cpu: 100m
+            limits:
+              memory: 64Mi
+              cpu: 500m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: arrstalledhandler
+  namespace: media
+spec:
+  selector:
+    app: arrstalledhandler

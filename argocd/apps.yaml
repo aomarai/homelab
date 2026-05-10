@@ -551,41 +551,6 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-# ---
-# ClusterPlex
-# apiVersion: argoproj.io/v1alpha1
-# kind: Application
-# metadata:
-#   name: clusterplex
-#   namespace: argocd
-#   annotations:
-#     argocd.argoproj.io/sync-wave: "3"
-#   finalizers:
-#     - resources-finalizer.argocd.argoproj.io
-# spec:
-#   project: default
-#   sources:
-#     - repoURL: https://pabloromeo.github.io/clusterplex
-#       chart: clusterplex
-#       targetRevision: "1.1.10"
-#       helm:
-#         valueFiles:
-#           - $values/apps/clusterplex/values.yaml
-#     - repoURL: https://github.com/aomarai/homelab.git
-#       targetRevision: HEAD
-#       ref: values
-#     - repoURL: https://github.com/aomarai/homelab.git
-#       targetRevision: HEAD
-#       path: apps/clusterplex
-#   destination:
-#     server: https://kubernetes.default.svc
-#     namespace: media
-#   syncPolicy:
-#     automated:
-#       prune: true
-#       selfHeal: true
-#     syncOptions:
-#       - CreateNamespace=true
 ---
 # Sonarr
 apiVersion: argoproj.io/v1alpha1
@@ -785,6 +750,32 @@ spec:
     - repoURL: https://github.com/aomarai/homelab.git
       targetRevision: HEAD
       path: apps/shelfmark
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: media
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# Arrstalledhandler
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: arrstalledhandler
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      path: apps/arrstalledhandler
   destination:
     server: https://kubernetes.default.svc
     namespace: media
