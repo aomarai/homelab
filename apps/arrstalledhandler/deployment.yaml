@@ -18,14 +18,14 @@ spec:
           image: tommythebeast/arrstalledhandler:1.1.3
           env:
             - name: RADARR_URL
-              value: "https://radarr"
+              value: "https://radarr:7878"
             - name: RADARR_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: arr-creds
                   key: RADARR_API_KEY
             - name: SONARR_URL
-              value: "https://sonarr"
+              value: "https://sonarr:8989"
             - name: SONARR_API_KEY
               valueFrom:
                 secretKeyRef:
