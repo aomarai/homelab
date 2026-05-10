@@ -1,21 +1,22 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: arrstalledhandler
+  name: radarr
   namespace: media
 spec:
   replicas: 1
+  serviceName: radarr
   selector:
     matchLabels:
-      app: arrstalledhandler
+      app: radarr
   template:
     metadata:
       labels:
-        app: arrstalledhandler
+        app: radarr
     spec:
       containers:
-        - name: arrstalledhandler
-          image: ghcr.io/linuxserver/arrstalledhandler:latest
+        - name: radarr
+          image: ghcr.io/linuxserver/radarr:latest
           env:
             - name: PUID
               value: "99"       # match Unraid nobody user
