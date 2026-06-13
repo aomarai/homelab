@@ -1,3 +1,9 @@
-defaultSettings:
+persistence:
   defaultClassReplicaCount: 2
   storageMinimalAvailablePercentage: 15
+longhornManager:
+  priorityClass: "system-node-critical"
+longhornDriver:
+  priorityClass: "system-node-critical"
+longhornUI:
+  priorityClass: "longhorn-critical"
