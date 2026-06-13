@@ -47,6 +47,7 @@ spec:
       helm:
         values: |
           controller:
+            priorityClassName: system-cluster-critical
             resources:
               requests:
                 memory: 64Mi
@@ -54,6 +55,8 @@ spec:
               limits:
                 memory: 128Mi
                 cpu: 100m
+          speaker:
+            priorityClassName: system-node-critical
     - repoURL: https://github.com/aomarai/homelab.git
       targetRevision: HEAD
       path: apps/metallb
