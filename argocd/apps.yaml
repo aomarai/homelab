@@ -100,6 +100,7 @@ spec:
           defaultSettings:
             defaultClassReplicaCount: 2
             storageMinimalAvailablePercentage: 15
+            priorityClass: system-cluster-critical
           resources:
             requests:
               memory: 128Mi
@@ -107,6 +108,12 @@ spec:
             limits:
               memory: 256Mi
               cpu: 200m
+          longhornManager:
+            priorityClass: "system-node-critical"
+          longhornDriver:
+            priorityClass: "system-node-critical"
+          longhornUI:
+            priorityClass: "longhorn-critical"
     - repoURL: https://github.com/aomarai/homelab.git
       targetRevision: HEAD
       path: apps/longhorn
