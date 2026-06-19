@@ -8,3 +8,7 @@ jdbcOverwrite:
   jdbcUsername: "sq-pg"
   jdbcSecretName: "postgresql-credentials"
   jdbcSecretPasswordKey: "POSTGRES_PASSWORD"
+
+persistence:
+  enabled: true
+  size: 10Gi
