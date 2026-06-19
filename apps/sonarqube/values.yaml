@@ -7,10 +7,6 @@ monitoringPasscode:
       key: monitoringPasscode
 jdbcOverwrite:
   jdbcUrl: "jdbc:postgresql://postgresql.sonarqube.svc.cluster.local:5432/sonarqube"
-  jdbcUsername:
-    valueFrom:
-      secretKeyRef:
-        name: postgresql-credentials
-        key: POSTGRES_USER
+  jdbcUsername: "sq-pg"
   jdbcSecretName: "postgresql-credentials"
   jdbcSecretPasswordKey: "POSTGRES_PASSWORD"
