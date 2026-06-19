@@ -1,0 +1,15 @@
+community.enabled: true
+monitoringPasscode:
+  valueFrom:
+    secretKeyRef:
+      name: monitoring-creds
+      key: monitoringPasscode
+jdbcOverwrite:
+  jdbcUrl: "jdbc:postgresql://postgresql.sonarqube.svc.cluster.local:5432/sonarqube"
+  jdbcUsername:
+    valueFrom:
+      secretKeyRef:
+        name: postgresql-credentials
+        key: POSTGRES_USER
+  jdbcSecretName: "postgresql-credentials"
+  jdbcSecretPasswordKey: "POSTGRES_PASSWORD"
