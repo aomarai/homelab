@@ -1,10 +1,9 @@
 server:
-  extraEnvironmentVars:
-    VAULT_TOKEN:
-      valueFrom:
-        secretKeyRef:
-          name: transit-token
-          key: TRANSIT_TOKEN
+  extraSecretEnvironmentVars:
+    - envName: VAULT_TOKEN
+      secretName: transit-token
+      secretKey: TRANSIT_TOKEN
+
   ha:
     enabled: true
     replicas: 3
@@ -22,11 +21,12 @@ server:
           path = "/vault/data"
         }
         service_registration "kubernetes" {}
+        
         seal "transit" {
-        address            = "http://192.168.1.18:8200" # Your Central Vault IP
-        key_name           = "baremetal-unseal-key"
-        mount_path         = "transit/"
-        tls_skip_verify    = "true" # Set to false if you configured HTTPS on central
+          address         = "http://192.168.1.18:8200"
+          key_name        = "baremetal-unseal-key"
+          mount_path      = "transit/"
+          tls_skip_verify = "true"
         }
   affinity: |
     podAntiAffinity:
