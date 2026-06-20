@@ -1,0 +1,7 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: no-priority
+value: 0
+globalDefault: true
+description: "This priority class should be used workloads that can be evicted as needed by the cluster."

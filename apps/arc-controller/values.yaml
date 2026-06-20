@@ -1,0 +1,4 @@
+replicaCount: 1
+serviceAccount:
+  create: true
+priorityClassName: "no-priority"

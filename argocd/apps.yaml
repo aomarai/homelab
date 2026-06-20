@@ -865,3 +865,38 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+---
+# Github Actions Operator
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: arc-controller
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
+      chart: gha-runner-scale-set-controller
+      targetRevision: "0.14.2"
+      helm:
+        valueFiles:
+          - $values/apps/arc-controller/values.yaml
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      ref: values
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      path: apps/arc-controller
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: arc-systems
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
