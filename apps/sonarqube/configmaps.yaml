@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init
+  namespace: sonarqube
+data:
+  init-sonar-db.sql: |
+    SELECT 'CREATE DATABASE sonarqube'
+    WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'sonarqube')\gexec
