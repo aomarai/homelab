@@ -4,6 +4,7 @@ monitoringPasscodeSecretName: "monitoring-creds"
 monitoringPasscodeSecretKey: "monitoringPasscode"
 
 jdbcOverwrite:
+  enabled: true
   jdbcUrl: "jdbc:postgresql://postgresql.sonarqube.svc.cluster.local:5432/sonarqube"
   jdbcUsername: "sq-pg"
   jdbcSecretName: "postgresql-credentials"
