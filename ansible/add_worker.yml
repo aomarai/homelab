@@ -81,20 +81,19 @@
     # ------------------------------------------------------------------ #
     #  System prerequisites                                                #
     # ------------------------------------------------------------------ #
-    - name: Download Red Hat RPM GPG Key
-      ansible.builtin.get_url:
-        url: https://redhat.com/security/team/key  # Update to exact official URL if needed
-        dest: /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
-        mode: '0644'
-      when: ansible_os_family == "RedHat"
+    - name: Fix RHEL 10.1 GPG key issue (RHEL-144980)
+      when: ansible_facts['os_family'] == "RedHat"
+      block:
+        - name: Update redhat-release with gpgcheck disabled
+          ansible.builtin.command: dnf update redhat-release -y --nogpgcheck
+          changed_when: true
 
-    - name: Import Red Hat GPG Key into RPM database
-      ansible.builtin.rpm_key:
-        state: present
-        key: /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
-      when: ansible_os_family == "RedHat"
-    
+        - name: Clean dnf cache after key update
+          ansible.builtin.command: dnf clean all
+          changed_when: true
+
     - name: Update all packages and kernel (Debian/Ubuntu)
+      when: ansible_os_family == "Debian"
       block:
       - name: Update apt cache and upgrade all packages (including kernel)
         ansible.builtin.apt:
@@ -118,6 +117,7 @@
         when: reboot_required_file.stat.exists
 
     - name: Update all packages and kernel (RHEL family)
+      when: ansible_os_family == 'RedHat'
       block:
         - name: Upgrade all packages and kernel to latest version
           ansible.builtin.dnf:
@@ -191,6 +191,11 @@
     # ------------------------------------------------------------------ #
     #  Kernel / OS tuning expected by K3s                                  #
     # ------------------------------------------------------------------ #
+    - name: Ensure br_netfilter is loaded (required for bridge sysctl)
+      community.general.modprobe:
+        name: br_netfilter
+        state: present
+    
     - name: Set required sysctl values
       ansible.posix.sysctl:
         name: "{{ item.name }}"
@@ -203,11 +208,6 @@
         - { name: net.bridge.bridge-nf-call-ip6tables, value: "1" }
         - { name: fs.inotify.max_user_instances,    value: "512" }
         - { name: fs.inotify.max_user_watches,      value: "524288" }
-
-    - name: Ensure br_netfilter is loaded (required for bridge sysctl)
-      community.general.modprobe:
-        name: br_netfilter
-        state: present
 
     - name: Persist br_netfilter
       ansible.builtin.copy:
@@ -281,7 +281,7 @@
       ansible.builtin.wait_for:
         host: "{{ ansible_host }}"
         port: 10250
-        timeout: 120
+        timeout: 360
         delay: 5
       delegate_to: localhost
       become: false
