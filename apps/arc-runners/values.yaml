@@ -1,4 +1,4 @@
-githubConfigUrl: "https://github.com/aomarai"
+githubConfigUrl: "https://github.com/aomarai/jobhunt"
 githubConfigSecret: "arc-github-secret"
 
 runnerScaleSetName: "homelab-runners"
