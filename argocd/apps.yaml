@@ -922,6 +922,9 @@ spec:
     - repoURL: https://github.com/aomarai/homelab.git
       targetRevision: HEAD
       ref: values
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      path: apps/arc-runners
   destination:
     server: https://kubernetes.default.svc
     namespace: arc-runners
