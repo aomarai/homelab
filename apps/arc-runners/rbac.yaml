@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: arc-controller-secret-reader
+  namespace: arc-runners
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: arc-controller-secret-reader
+  namespace: arc-runners
+subjects:
+  - kind: ServiceAccount
+    name: arc-controller-gha-rs-controller
+    namespace: arc-systems
+roleRef:
+  kind: Role
+  apiGroup: rbac.authorization.k8s.io
+  name: arc-controller-secret-reader
