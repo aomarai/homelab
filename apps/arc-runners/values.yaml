@@ -1,0 +1,34 @@
+githubConfigUrl: "https://github.com/aomarai"
+githubConfigSecret: "arc-github-secret"
+
+runnerScaleSetName: "homelab-runners"
+
+minRunners: 0
+maxRunners: 2
+
+containerMode:
+  type: "kubernetes"
+  kubernetesModeWorkVolumeClaim:
+    accessModes: ["ReadWriteOnce"]
+    storageClassName: "longhorn"
+    resources:
+      requests:
+        storage: 1Gi
+
+template:
+  spec:
+    priorityClassName: "no-priority"
+    containers:
+      - name: runner
+        image: ghcr.io/actions/actions-runner:latest
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "2"
+            memory: "1.5Gi"
+
+controllerServiceAccount:
+  namespace: arc-systems
+  name: arc-controller-gha-runner-scale-set-controller
