@@ -1,0 +1,26 @@
+# inventory.yml – example for add-k3s-worker.yml
+#
+# Copy/adjust to match your actual node IPs and SSH user.
+
+all:
+  vars:
+    ansible_user: ash
+    ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+    ansible_python_interpreter: /usr/bin/python3
+
+    # Set these here or pass via -e at the command line
+    # k3s_server_url: https://192.168.1.10:6443
+    # k3s_token: "K10xxxx..."
+    # k3s_version: "v1.32.4+k3s1"
+
+  children:
+    k3s_workers:
+      hosts:
+        worker-01:
+          ansible_host: 192.168.1.21
+        worker-02:
+          ansible_host: 192.168.1.22
+          # Per-node overrides:
+          k3s_node_labels:
+            - "node-role.kubernetes.io/storage=true"
+          k3s_extra_args: "--node-name worker-02-storage"

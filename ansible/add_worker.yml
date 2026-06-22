@@ -1,0 +1,236 @@
+---
+# add-k3s-worker.yml
+#
+# Joins one or more worker nodes into an existing K3s cluster.
+#
+# Usage:
+#   ansible-playbook add-k3s-worker.yml \
+#     -i inventory.yml \
+#     --extra-vars "k3s_token=<TOKEN> k3s_server_url=https://<CONTROL_PLANE_IP>:6443"
+#
+# Required vars (pass via -e or group_vars):
+#   k3s_server_url  - e.g. https://192.168.1.10:6443
+#   k3s_token       - contents of /var/lib/rancher/k3s/server/node-token on the server
+#
+# Optional vars (defaults shown):
+#   k3s_version       - "v1.32.4+k3s1"   (pin to match your existing cluster)
+#   k3s_node_labels   - []                (list of "key=value" strings)
+#   k3s_node_taints   - []                (list of "key=value:effect" strings)
+#   k3s_extra_args    - ""                (raw extra args appended to the agent command)
+#
+# Target group: [k3s_workers]
+
+- name: Prepare and join K3s worker nodes
+  hosts: k3s_workers
+  become: true
+  gather_facts: true
+
+  vars:
+    k3s_version: "v1.32.4+k3s1"
+    k3s_node_labels: []
+    k3s_node_taints: []
+    k3s_extra_args: ""
+
+    # Longhorn required kernel modules
+    longhorn_kernel_modules:
+      - dm_crypt
+      - iscsi_tcp
+      - nfs
+      - nfsd
+      - nvme_tcp
+      - uio
+      - uio_pci_generic
+      - vfat
+
+    # Longhorn required packages (Debian/Ubuntu)
+    longhorn_packages_debian:
+      - open-iscsi
+      - nfs-common
+      - util-linux
+      - cryptsetup
+      - dmsetup
+
+    # Longhorn required packages (RHEL/Rocky/CentOS)
+    longhorn_packages_rhel:
+      - iscsi-initiator-utils
+      - nfs-utils
+      - util-linux
+      - cryptsetup
+      - device-mapper
+
+    # General k3s agent dependencies
+    k3s_dep_packages_debian:
+      - curl
+      - ca-certificates
+      - apt-transport-https
+      - gnupg
+
+    k3s_dep_packages_rhel:
+      - curl
+      - ca-certificates
+
+  pre_tasks:
+    - name: Assert required variables are defined
+      ansible.builtin.assert:
+        that:
+          - k3s_server_url is defined and k3s_server_url | length > 0
+          - k3s_token is defined and k3s_token | length > 0
+        fail_msg: "k3s_server_url and k3s_token must be set (pass via -e or group_vars)"
+
+  tasks:
+    # ------------------------------------------------------------------ #
+    #  System prerequisites                                                #
+    # ------------------------------------------------------------------ #
+    - name: Install base dependencies (Debian/Ubuntu)
+      ansible.builtin.apt:
+        name: "{{ k3s_dep_packages_debian + longhorn_packages_debian }}"
+        state: present
+        update_cache: true
+      when: ansible_os_family == "Debian"
+
+    - name: Install base dependencies (RHEL family)
+      ansible.builtin.dnf:
+        name: "{{ k3s_dep_packages_rhel + longhorn_packages_rhel }}"
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    # ------------------------------------------------------------------ #
+    #  Kernel modules – load now and persist across reboots               #
+    # ------------------------------------------------------------------ #
+    - name: Load Longhorn kernel modules immediately
+      community.general.modprobe:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ longhorn_kernel_modules }}"
+      ignore_errors: true   # some modules may not exist on all kernels (e.g. nvme_tcp)
+
+    - name: Persist kernel modules via /etc/modules-load.d
+      ansible.builtin.copy:
+        dest: /etc/modules-load.d/longhorn.conf
+        content: |
+          # Managed by Ansible – required by Longhorn
+          {% for mod in longhorn_kernel_modules %}
+          {{ mod }}
+          {% endfor %}
+        owner: root
+        group: root
+        mode: "0644"
+
+    # ------------------------------------------------------------------ #
+    #  iscsid / multipathd                                                 #
+    # ------------------------------------------------------------------ #
+    - name: Enable and start iscsid
+      ansible.builtin.systemd:
+        name: iscsid
+        enabled: true
+        state: started
+
+    - name: Disable multipathd (conflicts with Longhorn iSCSI)
+      ansible.builtin.systemd:
+        name: multipathd
+        enabled: false
+        state: stopped
+      ignore_errors: true   # may not be installed
+
+    # ------------------------------------------------------------------ #
+    #  Kernel / OS tuning expected by K3s                                  #
+    # ------------------------------------------------------------------ #
+    - name: Set required sysctl values
+      ansible.posix.sysctl:
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        sysctl_set: true
+        reload: true
+      loop:
+        - { name: net.ipv4.ip_forward,              value: "1" }
+        - { name: net.bridge.bridge-nf-call-iptables, value: "1" }
+        - { name: net.bridge.bridge-nf-call-ip6tables, value: "1" }
+        - { name: fs.inotify.max_user_instances,    value: "512" }
+        - { name: fs.inotify.max_user_watches,      value: "524288" }
+
+    - name: Ensure br_netfilter is loaded (required for bridge sysctl)
+      community.general.modprobe:
+        name: br_netfilter
+        state: present
+
+    - name: Persist br_netfilter
+      ansible.builtin.copy:
+        dest: /etc/modules-load.d/k3s.conf
+        content: |
+          # Managed by Ansible – required by K3s
+          br_netfilter
+          overlay
+        owner: root
+        group: root
+        mode: "0644"
+
+    # ------------------------------------------------------------------ #
+    #  Swap (K3s agent tolerates it by default, but disable for purity)   #
+    # ------------------------------------------------------------------ #
+    - name: Disable swap now
+      ansible.builtin.command: swapoff -a
+      when: ansible_swaptotal_mb > 0
+      changed_when: ansible_swaptotal_mb > 0
+
+    - name: Disable swap in /etc/fstab
+      ansible.builtin.replace:
+        path: /etc/fstab
+        regexp: '^([^#].*\s+swap\s+.*)$'
+        replace: '# \1'
+
+    # ------------------------------------------------------------------ #
+    #  Download and run the K3s installer                                  #
+    # ------------------------------------------------------------------ #
+    - name: Download K3s install script
+      ansible.builtin.get_url:
+        url: https://get.k3s.io
+        dest: /tmp/k3s-install.sh
+        mode: "0755"
+        force: false   # don't re-download if already present
+
+    - name: Build node-label args string
+      ansible.builtin.set_fact:
+        _label_args: >-
+          {% for label in k3s_node_labels %}--node-label {{ label }} {% endfor %}
+
+    - name: Build node-taint args string
+      ansible.builtin.set_fact:
+        _taint_args: >-
+          {% for taint in k3s_node_taints %}--node-taint {{ taint }} {% endfor %}
+
+    - name: Install K3s agent
+      ansible.builtin.shell: |
+        set -euo pipefail
+        INSTALL_K3S_VERSION="{{ k3s_version }}" \
+        K3S_URL="{{ k3s_server_url }}" \
+        K3S_TOKEN="{{ k3s_token }}" \
+          /tmp/k3s-install.sh agent \
+          {{ _label_args | trim }} \
+          {{ _taint_args | trim }} \
+          {{ k3s_extra_args }}
+      args:
+        creates: /usr/local/bin/k3s   # skip if already installed at this path
+      register: k3s_install_result
+
+    # ------------------------------------------------------------------ #
+    #  Post-install verification                                           #
+    # ------------------------------------------------------------------ #
+    - name: Ensure k3s-agent service is enabled and running
+      ansible.builtin.systemd:
+        name: k3s-agent
+        enabled: true
+        state: started
+
+    - name: Wait for the agent to register (check from this host via kubelet port)
+      ansible.builtin.wait_for:
+        host: "{{ ansible_host }}"
+        port: 10250
+        timeout: 120
+        delay: 5
+      delegate_to: localhost
+      become: false
+
+    - name: Report install result
+      ansible.builtin.debug:
+        msg: "K3s agent installed on {{ inventory_hostname }} ({{ ansible_host }}). Node should appear in 'kubectl get nodes' within ~30s."
+      when: k3s_install_result is changed
