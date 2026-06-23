@@ -1,14 +1,12 @@
 # harbor-values.yaml
 
 expose:
-  type: ingress
+  type: clusterIP
   tls:
     enabled: false
   ingress:
     hosts:
       core: harbor.homelab.local
-    className: ""
-    annotations: {}
 
 externalURL: https://harbor.homelab.local
 
