@@ -21,6 +21,7 @@ persistence:
     jobservice:
       storageClass: longhorn
       size: 1Gi
+      accessMode: ReadWriteMany
     database:
       storageClass: longhorn
       size: 5Gi
@@ -30,6 +31,7 @@ persistence:
     trivy:
       storageClass: longhorn
       size: 5Gi
+      accessMode: ReadWriteMany
 
 existingSecretAdminPassword: harbor-admin-secret
 existingSecretAdminPasswordKey: HARBOR_ADMIN_PASSWORD
