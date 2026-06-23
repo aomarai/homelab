@@ -17,6 +17,7 @@ persistence:
     registry:
       storageClass: longhorn
       size: 50Gi
+      accessMode: ReadWriteMany
     jobservice:
       storageClass: longhorn
       size: 1Gi
