@@ -31,7 +31,8 @@ persistence:
       storageClass: longhorn
       size: 5Gi
 
-harborAdminPassword: "changeme"  # pull from Vault/Sealed Secret
+existingSecretAdminPassword: harbor-admin-secret
+existingSecretAdminPasswordKey: HARBOR_ADMIN_PASSWORD
 
 # Proxy cache is the core feature you want
 proxy:
