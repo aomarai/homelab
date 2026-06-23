@@ -54,19 +54,25 @@ chartmuseum:
   enabled: false  # skip unless you want to host Helm charts too
 
 # Resource tuning for homelab
+portal:
+  replicas: 2
+
 core:
+  replicas: 2
   resources:
     requests:
       memory: 256Mi
       cpu: 100m
 
 jobservice:
+  replicas: 2
   resources:
     requests:
       memory: 128Mi
       cpu: 50m
 
 registry:
+  replicas: 2
   resources:
     requests:
       memory: 128Mi
