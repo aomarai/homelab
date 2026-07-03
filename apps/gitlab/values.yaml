@@ -41,9 +41,12 @@ global:
     # Fixes the Backups validation check
     backups:
       bucket: gitlab
-      tmpBucket: gitlab-tmp # The documentation notes this key is strictly mandatory
+      tmpBucket: gitlab-tmp
       objectStorage:
         backend: s3
+        config:
+          secret: gitlab-backup-storage-config
+          key: config
         
     packages:
       enabled: true
