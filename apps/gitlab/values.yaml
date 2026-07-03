@@ -67,6 +67,7 @@ global:
   gatewayApi:
     configureCertmanager: false
     installEnvoy: false
+    enabled: false
   ingress:
     configureCertmanager: false
 
