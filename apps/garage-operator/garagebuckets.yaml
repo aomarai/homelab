@@ -1,0 +1,10 @@
+apiVersion: garage.rajsingh.info/v1beta1
+kind: GarageBucket
+metadata:
+  name: gitlab
+  namespace: garage-system
+spec:
+  clusterRef:
+    name: garage
+  quotas:
+    maxSize: 70Gi
