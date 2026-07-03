@@ -72,10 +72,10 @@ global:
 # --- Container Registry Configuration ---
 registry:
   enabled: true
-  bucket: gitlab
+  bucket: gitlab-registry
   storage:
-    secret: gitlab-storage-connection
-    key: connection
+    secret: gitlab-registry-storage
+    key: config
 
 # --- Toolbox Backup Engine Mapping ---
 gitlab:
