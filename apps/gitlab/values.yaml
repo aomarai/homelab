@@ -21,31 +21,53 @@ global:
     host: redis
     port: 6379
 
-  # --- Secure Object Storage Configuration ---
+  # --- Type-Specific Object Storage Configurations ---
   appConfig:
-    objectStorage:
+    artifacts:
       enabled: true
+      bucket: gitlab
       connection:
-        secret: gitlab-storage-connection # Matches the name in your SealedSecret template
+        secret: gitlab-storage-connection
+        key: connection
+    uploads:
+      enabled: true
+      bucket: gitlab
+      connection:
+        secret: gitlab-storage-connection
         key: connection
     
-    # Point every internal storage type to your unified Garage bucket
-    artifacts:
-      bucket: gitlab
-    uploads:
-      bucket: gitlab
+    # Combined flat and nested structure to satisfy the NOTES.txt regex check
     backups:
       bucket: gitlab
+      objectStorage:
+        backend: s3
+      connection:
+        secret: gitlab-storage-connection
+        key: connection
+        
     packages:
+      enabled: true
       bucket: gitlab
+      connection:
+        secret: gitlab-storage-connection
+        key: connection
     lfs:
+      enabled: true
       bucket: gitlab
+      connection:
+        secret: gitlab-storage-connection
+        key: connection
+
+  # Disable internal certificate helpers since you run Traefik
+  gatewayApi:
+    configureCertmanager: false
+  ingress:
+    configureCertmanager: false
 
 # --- Container Registry Configuration ---
 registry:
   enabled: true
   bucket: gitlab
-  # Tells the container registry to reuse the same global storage secret
   storage:
     secret: gitlab-storage-connection
     key: connection
@@ -57,8 +79,10 @@ postgresql:
 redis:
   install: false
 
-certmanager:
+installCertmanager: false
+
+certmanager-issuer:
   install: false
 
 nginx-ingress:
-  install: false
+  enabled: false
