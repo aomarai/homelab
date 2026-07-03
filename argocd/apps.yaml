@@ -970,7 +970,7 @@ spec:
     syncOptions:
       - CreateNamespace=true
 ---
-# Harbor
+# Garage
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -998,6 +998,42 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: garage-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+---
+# Gitlab
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitlab
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://charts.gitlab.io/
+      chart: gitlab
+      targetRevision: "10.1.1"
+      helm:
+        valueFiles:
+          - $values/apps/gitlab/values.yaml
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      ref: values
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      path: apps/gitlab
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gitlab
   syncPolicy:
     automated:
       prune: true
