@@ -36,14 +36,12 @@ global:
         secret: gitlab-storage-connection
         key: connection
     
-    # Combined flat and nested structure to satisfy the NOTES.txt regex check
+    # Fixes the Backups validation check
     backups:
       bucket: gitlab
+      tmpBucket: gitlab-tmp # The documentation notes this key is strictly mandatory
       objectStorage:
         backend: s3
-      connection:
-        secret: gitlab-storage-connection
-        key: connection
         
     packages:
       enabled: true
@@ -71,6 +69,15 @@ registry:
   storage:
     secret: gitlab-storage-connection
     key: connection
+
+# --- Toolbox Backup Engine Mapping ---
+gitlab:
+  toolbox:
+    backups:
+      objectStorage:
+        config:
+          secret: gitlab-backup-storage-config
+          key: config
 
 # --- External Sub-chart Disables ---
 postgresql:
