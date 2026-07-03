@@ -49,12 +49,12 @@ spec:
       namespace: traefik
       sectionName: websecure
   hostnames:
-    - "registry.gitlab.ashworks.net"
+    - "gitlab-registry.ashworks.net"
   rules:
     - matches:
         - headers:
             - name: Host
-              value: "registry.gitlab.ashworks.net"
+              value: "gitlab-registry.ashworks.net"
       backendRefs:
         - name: gitlab-registry
           port: 5000

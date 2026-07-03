@@ -4,7 +4,7 @@ global:
     gitlab:
       name: gitlab.ashworks.net
     registry:
-      name: registry.gitlab.ashworks.net
+      name: gitlab-registry.ashworks.net
   certificates:
     customCAs: []
 
