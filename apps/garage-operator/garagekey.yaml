@@ -1,0 +1,13 @@
+apiVersion: garage.rajsingh.info/v1beta1
+kind: GarageKey
+metadata:
+  name: gitlab-s3-key
+  namespace: garage-system
+spec:
+  clusterRef:
+    name: garage
+  bucketPermissions:
+    - bucketRef:
+        name: gitlab
+      read: true
+      write: true
