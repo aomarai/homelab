@@ -10,7 +10,7 @@ spec:
   image: dxflrs/garage:v2.3.0
 
   replication:
-    factor: 3
+    factor: 1
     consistencyMode: consistent
 
   # Storage tier — long-lived StatefulSet with PVCs.
