@@ -1,3 +1,11 @@
+apiVersion: garage.rajsingh.info/v1beta2
+kind: GarageCluster
+metadata:
+  labels:
+    app.kubernetes.io/name: garage-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: garage
+  namespace: garage-system
 spec:
   image: dxflrs/garage:v2.3.0
   replication:
