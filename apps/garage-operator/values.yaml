@@ -55,8 +55,8 @@ spec:
     region: garage
 
   # Website hosting — enabled by default with rootDomain ".<name>.<namespace>.svc"
-  webApi:
-    rootDomain: ".garage.homelab.local"
+  # webApi:
+  #   rootDomain: ".garage.homelab.local"
 
   admin:
     bindPort: 3903
