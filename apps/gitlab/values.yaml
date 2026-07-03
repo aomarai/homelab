@@ -1,0 +1,64 @@
+global:
+  hosts:
+    domain: ashworks.net
+    gitlab:
+      name: gitlab.ashworks.net
+
+  # --- External PostgreSQL Configuration ---
+  psql:
+    host: postgresql
+    port: 5432
+    database: gitlabhq_production
+    username:
+      secret: postgresql-credentials
+      key: POSTGRES_USER
+    password:
+      secret: postgresql-credentials
+      key: POSTGRES_PASSWORD
+
+  # --- External Redis Configuration ---
+  redis:
+    host: redis
+    port: 6379
+
+  # --- Secure Object Storage Configuration ---
+  appConfig:
+    objectStorage:
+      enabled: true
+      connection:
+        secret: gitlab-storage-connection # Matches the name in your SealedSecret template
+        key: connection
+    
+    # Point every internal storage type to your unified Garage bucket
+    artifacts:
+      bucket: gitlab
+    uploads:
+      bucket: gitlab
+    backups:
+      bucket: gitlab
+    packages:
+      bucket: gitlab
+    lfs:
+      bucket: gitlab
+
+# --- Container Registry Configuration ---
+registry:
+  enabled: true
+  bucket: gitlab
+  # Tells the container registry to reuse the same global storage secret
+  storage:
+    secret: gitlab-storage-connection
+    key: connection
+
+# --- External Sub-chart Disables ---
+postgresql:
+  install: false
+
+redis:
+  install: false
+
+certmanager:
+  install: false
+
+nginx-ingress:
+  install: false
