@@ -1,4 +1,4 @@
-apiVersion: garage.rajsingh.info/v1beta1
+apiVersion: garage.rajsingh.info/v1beta2
 kind: GarageCluster
 metadata:
   labels:
@@ -8,23 +8,42 @@ metadata:
   namespace: garage-system
 spec:
   image: dxflrs/garage:v2.3.0
-  replicas: 3                     # Move replicas out here
-  gateway: true                   # Change this to a boolean toggle
 
   replication:
     factor: 3
     consistencyMode: consistent
 
-  metadataSize: 10Gi
-  dataSize: 75Gi
+  # Storage tier — long-lived StatefulSet with PVCs.
+  storage:
+    replicas: 3
+    metadata:
+      size: 10Gi
+    data:
+      size: 75Gi
+    # PVC retention policy — controls what happens to PVCs on delete/scale-down.
+    pvcRetentionPolicy:
+      whenDeleted: Delete
+      whenScaled: Delete
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
 
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 1000m
-      memory: 1Gi
+  # Gateway tier — ephemeral Deployment, EmptyDir for both metadata and data.
+  # Pod node IDs rotate per pod restart; the operator garbage-collects stale
+  # layout entries via tombstone cleanup.
+  gateway:
+    replicas: 2
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 500m
+        memory: 256Mi
 
   network:
     rpcBindPort: 3901
@@ -34,6 +53,10 @@ spec:
   s3Api:
     bindPort: 3900
     region: garage
+
+  # Website hosting — enabled by default with rootDomain ".<name>.<namespace>.svc"
+  # webApi:
+  #   rootDomain: ".garage.homelab.local"
 
   admin:
     bindPort: 3903
