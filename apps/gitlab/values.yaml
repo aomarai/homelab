@@ -66,6 +66,7 @@ global:
   # Disable internal certificate helpers since you run Traefik
   gatewayApi:
     configureCertmanager: false
+    installEnvoy: false
   ingress:
     configureCertmanager: false
 
