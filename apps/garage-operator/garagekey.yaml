@@ -11,3 +11,17 @@ spec:
         name: gitlab
       read: true
       write: true
+---
+apiVersion: garage.rajsingh.info/v1beta1
+kind: GarageKey
+metadata:
+  name: gitlab-registry-key
+  namespace: garage-system
+spec:
+  clusterRef:
+    name: garage
+  bucketPermissions:
+    - bucketRef:
+        name: gitlab-registry
+      read: true
+      write: true

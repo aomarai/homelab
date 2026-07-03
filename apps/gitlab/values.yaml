@@ -3,6 +3,8 @@ global:
     domain: ashworks.net
     gitlab:
       name: gitlab.ashworks.net
+    registry:
+      name: registry.gitlab.ashworks.net
   certificates:
     customCAs: []
 
