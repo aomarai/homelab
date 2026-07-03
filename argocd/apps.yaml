@@ -797,39 +797,39 @@ spec:
       - CreateNamespace=true
 ---
 # Sonarqube CE
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: sonarqube
-  namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "4"
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  sources:
-    - repoURL: https://SonarSource.github.io/helm-chart-sonarqube/
-      chart: sonarqube
-      targetRevision: "2026.3.1"
-      helm:
-        valueFiles:
-          - $values/apps/sonarqube/values.yaml
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      ref: values
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      path: apps/sonarqube
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: sonarqube
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: sonarqube
+#   namespace: argocd
+#   annotations:
+#     argocd.argoproj.io/sync-wave: "4"
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+# spec:
+#   project: default
+#   sources:
+#     - repoURL: https://SonarSource.github.io/helm-chart-sonarqube/
+#       chart: sonarqube
+#       targetRevision: "2026.3.1"
+#       helm:
+#         valueFiles:
+#           - $values/apps/sonarqube/values.yaml
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       ref: values
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       path: apps/sonarqube
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: sonarqube
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true
 ---
 # Hashicorp Vault
 apiVersion: argoproj.io/v1alpha1
@@ -867,108 +867,108 @@ spec:
       - CreateNamespace=true
 ---
 # Github Actions Operator
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: arc-controller
-  namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "5"
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  sources:
-    - repoURL: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
-      chart: gha-runner-scale-set-controller
-      targetRevision: "0.14.2"
-      helm:
-        valueFiles:
-          - $values/apps/arc-controller/values.yaml
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      ref: values
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      path: apps/arc-controller
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: arc-systems
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: arc-controller
+#   namespace: argocd
+#   annotations:
+#     argocd.argoproj.io/sync-wave: "5"
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+# spec:
+#   project: default
+#   sources:
+#     - repoURL: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
+#       chart: gha-runner-scale-set-controller
+#       targetRevision: "0.14.2"
+#       helm:
+#         valueFiles:
+#           - $values/apps/arc-controller/values.yaml
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       ref: values
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       path: apps/arc-controller
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: arc-systems
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true
 ---
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: arc-runners
-  namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "6"
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  sources:
-    - repoURL: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
-      chart: gha-runner-scale-set
-      targetRevision: "0.14.2"
-      helm:
-        valueFiles:
-          - $values/apps/arc-runners/values.yaml
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      ref: values
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      path: apps/arc-runners
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: arc-runners
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: arc-runners
+#   namespace: argocd
+#   annotations:
+#     argocd.argoproj.io/sync-wave: "6"
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+# spec:
+#   project: default
+#   sources:
+#     - repoURL: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
+#       chart: gha-runner-scale-set
+#       targetRevision: "0.14.2"
+#       helm:
+#         valueFiles:
+#           - $values/apps/arc-runners/values.yaml
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       ref: values
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       path: apps/arc-runners
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: arc-runners
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true
 ---
 # Harbor
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: harbor
-  namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  sources:
-    - repoURL: https://helm.goharbor.io
-      chart: harbor
-      targetRevision: "1.19.1"
-      helm:
-        valueFiles:
-          - $values/apps/goharbor/values.yaml
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      ref: values
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      path: apps/goharbor
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: harbor
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: harbor
+#   namespace: argocd
+#   annotations:
+#     argocd.argoproj.io/sync-wave: "2"
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+# spec:
+#   project: default
+#   sources:
+#     - repoURL: https://helm.goharbor.io
+#       chart: harbor
+#       targetRevision: "1.19.1"
+#       helm:
+#         valueFiles:
+#           - $values/apps/goharbor/values.yaml
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       ref: values
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       path: apps/goharbor
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: harbor
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true
 ---
 # Garage
 apiVersion: argoproj.io/v1alpha1
