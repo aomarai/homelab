@@ -18,6 +18,8 @@ spec:
       - name: postgresql
         image: postgres:18
         env:
+        - name: POSTGRES_DB
+          value: gitlabhq_production
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
