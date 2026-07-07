@@ -971,41 +971,41 @@ spec:
 #       - CreateNamespace=true
 ---
 # Garage
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: garage
-  namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "4"
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  sources:
-    - repoURL: oci://ghcr.io/rajsinghtech/charts/garage-operator
-      chart: garage-operator
-      targetRevision: "0.6.20"
-      helm:
-        valueFiles:
-          - $values/apps/garage-operator/values.yaml
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      ref: values
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      path: apps/garage-operator
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: garage-system
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-      - ServerSideApply=true
----
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: garage
+#   namespace: argocd
+#   annotations:
+#     argocd.argoproj.io/sync-wave: "4"
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+# spec:
+#   project: default
+#   sources:
+#     - repoURL: oci://ghcr.io/rajsinghtech/charts/garage-operator
+#       chart: garage-operator
+#       targetRevision: "0.6.20"
+#       helm:
+#         valueFiles:
+#           - $values/apps/garage-operator/values.yaml
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       ref: values
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       path: apps/garage-operator
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: garage-system
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true
+#       - ServerSideApply=true
+# ---
 # Gitlab
 # apiVersion: argoproj.io/v1alpha1
 # kind: Application
