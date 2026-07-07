@@ -719,56 +719,56 @@ spec:
       - CreateNamespace=true
 ---
 # Calibre Web Automated
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: calibre-web-automated
-  namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "3"
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  sources:
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      path: apps/calibre-web-automated
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: media
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
----
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: calibre-web-automated
+#   namespace: argocd
+#   annotations:
+#     argocd.argoproj.io/sync-wave: "3"
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+# spec:
+#   project: default
+#   sources:
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       path: apps/calibre-web-automated
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: media
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true
+# ---
 # Shelfmark
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: shelfmark
-  namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "3"
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  sources:
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      path: apps/shelfmark
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: media
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: shelfmark
+#   namespace: argocd
+#   annotations:
+#     argocd.argoproj.io/sync-wave: "3"
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+# spec:
+#   project: default
+#   sources:
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       path: apps/shelfmark
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: media
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true
 ---
 # Arrstalledhandler
 apiVersion: argoproj.io/v1alpha1
@@ -1007,37 +1007,37 @@ spec:
       - ServerSideApply=true
 ---
 # Gitlab
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: gitlab
-  namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "6"
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  sources:
-    - repoURL: https://charts.gitlab.io/
-      chart: gitlab
-      targetRevision: "10.1.1"
-      helm:
-        valueFiles:
-          - $values/apps/gitlab/values.yaml
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      ref: values
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      path: apps/gitlab
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: gitlab
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-      - ServerSideApply=true
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: gitlab
+#   namespace: argocd
+#   annotations:
+#     argocd.argoproj.io/sync-wave: "6"
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+# spec:
+#   project: default
+#   sources:
+#     - repoURL: https://charts.gitlab.io/
+#       chart: gitlab
+#       targetRevision: "10.1.1"
+#       helm:
+#         valueFiles:
+#           - $values/apps/gitlab/values.yaml
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       ref: values
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       path: apps/gitlab
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: gitlab
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true
+#       - ServerSideApply=true
