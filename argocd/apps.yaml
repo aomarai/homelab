@@ -320,40 +320,40 @@ spec:
       - CreateNamespace=true
 ---
 # Authentik
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: authentik
-  namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-  annotations:
-    argocd.argoproj.io/sync-wave: "3"
-spec:
-  project: default
-  sources:
-    - repoURL: https://charts.goauthentik.io
-      chart: authentik
-      targetRevision: "2026.2.1"
-      helm:
-        valueFiles:
-          - $values/apps/authentik/values.yaml
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      ref: values
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      path: apps/authentik
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: idm
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
----
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: authentik
+#   namespace: argocd
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+#   annotations:
+#     argocd.argoproj.io/sync-wave: "3"
+# spec:
+#   project: default
+#   sources:
+#     - repoURL: https://charts.goauthentik.io
+#       chart: authentik
+#       targetRevision: "2026.2.1"
+#       helm:
+#         valueFiles:
+#           - $values/apps/authentik/values.yaml
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       ref: values
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       path: apps/authentik
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: idm
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true
+# ---
 # Peek
 apiVersion: argoproj.io/v1alpha1
 kind: Application
