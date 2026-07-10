@@ -12,7 +12,7 @@ spec:
     factor: 1
     consistencyMode: consistent
   storage:
-    replicas: 3
+    replicas: 1
     metadata:
       size: 10Gi
     data:
@@ -28,7 +28,7 @@ spec:
         cpu: 1000m
         memory: 1Gi
   gateway:
-    replicas: 2
+    replicas: 1
     resources:
       requests:
         cpu: 50m
