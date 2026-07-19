@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: requestrr
+  namespace: media
+spec:
+  replicas: 1
+  serviceName: requestrr
+  selector:
+    matchLabels:
+      app: requestrr
+  template:
+    metadata:
+      labels:
+        app: requestrr
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: requestrr
+          image: linuxserver/requestrr:2.1.2
+          ports:
+            - containerPort: 4545
+          env:
+            - name: TZ
+              value: America/Chicago
+            - name: LOG_LEVEL
+              value: info
+          resources:
+            requests:
+              memory: 16Mi
+              cpu: 100m
+            limits:
+              memory: 512Mi
+              cpu: 500m
+          volumeMounts:
+            - name: config
+              mountPath: /config
+  volumeClaimTemplates:
+    - metadata:
+        name: config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 1.5Gi
