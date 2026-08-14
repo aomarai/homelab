@@ -4,16 +4,11 @@ metadata:
   name: firecrawl-lb
   namespace: firecrawl
   annotations:
-    # pins a specific IP from your MetalLB pool instead of letting it
-    # pick one — swap for an address in your actual pool range
     metallb.universe.tf/loadBalancerIPs: 192.168.1.240
 spec:
   type: LoadBalancer
   selector:
-    # match the labels the chart puts on the api pods — verify with
-    # `kubectl get pods -n firecrawl --show-labels` once it's deployed
-    app.kubernetes.io/name: firecrawl
-    app.kubernetes.io/component: api
+    app: firecrawl-api
   ports:
     - port: 3002
       targetPort: 3002
