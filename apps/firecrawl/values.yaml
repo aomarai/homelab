@@ -1,15 +1,40 @@
-resources:
-  enabled: true   # off by default upstream; turn on for a bare-metal cluster
-
-rabbitmq:
-  enabled: true
-extractWorker:
-  enabled: true
-nuqPrefetchWorker:
-  enabled: true
-
 secret:
   # wire this from your existing Sealed Secrets pattern rather than plaintext
   BULL_AUTH_KEY: ""
   TEST_API_KEY: ""
   # OPENAI_API_KEY: "" # only if you want AI-powered extract/summarize
+
+resources:
+  enabled: true
+
+api:
+  resources:
+    requests: { memory: "512Mi", cpu: "250m" }
+    limits:   { memory: "1Gi",   cpu: "500m" }
+
+worker:
+  resources:
+    requests: { memory: "512Mi", cpu: "250m" }
+    limits:   { memory: "1Gi",   cpu: "500m" }
+
+extractWorker:
+  enabled: true   # AI-powered /extract — skip unless Hermes actually calls it
+
+nuqWorker:
+  replicaCount: 1
+  resources:
+    requests: { memory: "512Mi", cpu: "250m" }
+    limits:   { memory: "1Gi",   cpu: "500m" }
+
+nuqPrefetchWorker:
+  enabled: true   # prefetch optimization, not required for basic scrape/crawl
+
+nuqPostgres:
+  resources:
+    requests: { memory: "256Mi", cpu: "100m" }
+    limits:   { memory: "512Mi", cpu: "250m" }
+
+rabbitmq:
+  resources:
+    requests: { memory: "256Mi", cpu: "100m" }
+    limits:   { memory: "512Mi", cpu: "250m" }
