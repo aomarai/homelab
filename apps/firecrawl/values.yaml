@@ -1,0 +1,15 @@
+resources:
+  enabled: true   # off by default upstream; turn on for a bare-metal cluster
+
+rabbitmq:
+  enabled: true
+extractWorker:
+  enabled: true
+nuqPrefetchWorker:
+  enabled: true
+
+secret:
+  # wire this from your existing Sealed Secrets pattern rather than plaintext
+  BULL_AUTH_KEY: ""
+  TEST_API_KEY: ""
+  # OPENAI_API_KEY: "" # only if you want AI-powered extract/summarize

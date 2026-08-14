@@ -1042,6 +1042,7 @@ spec:
 #       - CreateNamespace=true
 #       - ServerSideApply=true
 ---
+# Requestrr
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -1060,6 +1061,44 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: media
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# Firecrawl
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: firecrawl
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: main
+      path: charts/firecrawl
+      helm:
+        releaseName: firecrawl
+        valueFiles:
+          - $values/apps/firecrawl/values.yaml
+        parameters:
+          - name: image.repository
+            value: ghcr.io/firecrawl/firecrawl
+          - name: playwright.repository
+            value: ghcr.io/firecrawl/playwright-service
+          - name: nuqPostgres.image.repository
+            value: ghcr.io/firecrawl/nuq-postgres
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: firecrawl
   syncPolicy:
     automated:
       prune: true
