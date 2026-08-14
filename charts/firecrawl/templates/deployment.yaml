@@ -40,7 +40,7 @@ spec:
             - secretRef:
                 name: {{ include "firecrawl.fullname" . }}-secret
             - secretRef:
-                name: firecrawl-auth-secret
+                name: firecrawl-auth-key
           {{- if and .Values.resources.enabled .Values.api.resources }}
 
           resources:
