@@ -1096,6 +1096,9 @@ spec:
     - repoURL: https://github.com/aomarai/homelab.git
       targetRevision: main
       ref: values
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      path: apps/firecrawl
   destination:
     server: https://kubernetes.default.svc
     namespace: firecrawl
