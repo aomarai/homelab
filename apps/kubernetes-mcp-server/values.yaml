@@ -7,18 +7,6 @@ image:
   pullPolicy: IfNotPresent
   tag: "v0.0.66"
 
-# Ingress configuration
-ingress:
-  enabled: true
-  className: nginx
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-  hosts:
-    - host: kubernetes-mcp.local
-      paths:
-        - path: /
-          pathType: Prefix
-
 # Service configuration
 service:
   type: ClusterIP
@@ -32,3 +20,29 @@ resources:
   requests:
     cpu: 100m
     memory: 128Mi
+---
+# Traefik HTTPRoute (Gateway: /api/mcp/kubernetes/)
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: kubernetes-mcp-server
+  namespace: mcp
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: homelab
+      namespace: traefik
+      sectionName: websecure
+  hostnames:
+    - kubernetes-mcp.local
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api/mcp/kubernetes/
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: kubernetes-mcp-server
+          port: 8000
