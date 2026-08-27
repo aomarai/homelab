@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mcp
+  labels:
+    app: mcp
+  annotations:
+    argocd.argoproj.io/managed-by: argocd
+

@@ -1108,3 +1108,41 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+---
+# kubernetes-mcp-server
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubernetes-mcp-server
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  project: default
+  sources:
+    - chart: kubernetes-mcp-server
+      repoURL: oci://ghcr.io/containers/kubernetes-mcp-server
+      targetRevision: v0.0.66
+      helm:
+        valueFiles:
+          - $values/apps/kubernetes-mcp-server/values.yaml
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mcp
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
