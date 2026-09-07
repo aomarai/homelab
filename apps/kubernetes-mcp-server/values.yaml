@@ -1,0 +1,22 @@
+# kubernetes-mcp-server values
+# Latest: v0.0.66
+
+# Image configuration
+image:
+  repository: ghcr.io/containers/kubernetes-mcp-server
+  pullPolicy: IfNotPresent
+  tag: "v0.0.66"
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 8000
+
+# Resource limits
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
