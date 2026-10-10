@@ -18,14 +18,17 @@ service:
   type: ClusterIP
   port: 8080
 
-# Bind the server's ServiceAccount to the built-in "view" ClusterRole so the
-# MCP server has read-only (cluster-wide) access to the resources it exposes.
+# Bind the server's ServiceAccount to the built-in "cluster-admin" ClusterRole so
+# the MCP server can perform full CRUD (debug + setup), not just read.
+# WARNING: this grants full cluster control, and the endpoint is served
+# unauthenticated over the LAN Gateway (apps/kubernetes-mcp-server/httproute.yaml) --
+# anyone who can reach the hostname inherits cluster-admin.
 rbac:
   create: true
   extraClusterRoleBindings:
-    - name: view
+    - name: cluster-admin
       roleRef:
-        name: view
+        name: cluster-admin
         external: true
 
 # The upstream chart enables a classic Ingress by default and it requires
