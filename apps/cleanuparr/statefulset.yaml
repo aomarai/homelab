@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cleanuparr
+  namespace: media
+spec:
+  replicas: 1
+  serviceName: cleanuparr
+  selector:
+    matchLabels:
+      app: cleanuparr
+  template:
+    metadata:
+      labels:
+        app: cleanuparr
+    spec:
+      containers:
+        - name: cleanuparr
+          image: ghcr.io/cleanuparr/cleanuparr:2.10.9
+          env:
+            - name: PUID
+              value: "99"       # match Unraid nobody user
+            - name: PGID
+              value: "100"      # match Unraid users group
+            - name: TZ
+              value: America/Chicago
+            - name: PORT
+              value: "11011"
+            # Reuse the *arr endpoints + API keys already defined for the media
+            # stack (arr-creds SealedSecret). Cleanuparr's own connections are
+            # configured in its web UI; these expose the in-repo values it needs.
+            - name: RADARR_URL
+              value: "http://radarr:7878"
+            - name: RADARR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: arr-creds
+                  key: RADARR_API_KEY
+            - name: SONARR_URL
+              value: "http://sonarr:8989"
+            - name: SONARR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: arr-creds
+                  key: SONARR_API_KEY
+          ports:
+            - containerPort: 11011
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 11011
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 11011
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 512Mi
+              cpu: 500m
+          volumeMounts:
+            - name: config
+              mountPath: /config
+  volumeClaimTemplates:
+    - metadata:
+        name: config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 5Gi
