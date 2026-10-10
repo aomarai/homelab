@@ -22,11 +22,22 @@ containerMode:
     storageClassName: "longhorn"
     resources:
       requests:
-        storage: 1Gi
+        # The job's work volume holds the checkout, the tool cache and the
+        # scanner's bundled JRE. 1Gi runs out mid-scan (observed ENOSPC copying
+        # sonar-scanner's jre/lib), so give it the same 5Gi the other apps use.
+        storage: 5Gi
 
 template:
   spec:
     priorityClassName: "no-priority"
+    # The longhorn volume mounts root-owned, so the runner user (uid/gid 1001
+    # in ghcr.io/actions/actions-runner) cannot create /home/runner/_work/_tool
+    # and every job dies in "Set up job" with
+    # System.UnauthorizedAccessException: Access to the path ... is denied.
+    # fsGroup makes kubelet group-own the volume so 1001 can write.
+    securityContext:
+      fsGroup: 1001
+      fsGroupChangePolicy: "OnRootMismatch"
     containers:
       - name: runner
         # Ubuntu 24.04 base, NOPASSWD sudo, git/curl/jq/unzip, gpg-agent.

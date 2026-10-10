@@ -13,11 +13,16 @@ containerMode:
     storageClassName: "longhorn"
     resources:
       requests:
-        storage: 1Gi
+        storage: 5Gi
 
 template:
   spec:
     priorityClassName: "no-priority"
+    # See apps/arc-runners-aha/values.yaml: the longhorn work volume is
+    # root-owned, so the runner user (uid/gid 1001) needs fsGroup to write it.
+    securityContext:
+      fsGroup: 1001
+      fsGroupChangePolicy: "OnRootMismatch"
     containers:
       - name: runner
         image: ghcr.io/actions/actions-runner:latest
