@@ -1123,14 +1123,17 @@ spec:
   project: default
   sources:
     - chart: kubernetes-mcp-server
-      repoURL: oci://ghcr.io/containers/kubernetes-mcp-server
-      targetRevision: v0.0.66
+      repoURL: oci://ghcr.io/containers/charts/kubernetes-mcp-server
+      targetRevision: 0.1.0
       helm:
         valueFiles:
           - $values/apps/kubernetes-mcp-server/values.yaml
     - repoURL: https://github.com/aomarai/homelab.git
       targetRevision: HEAD
       ref: values
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      path: apps/kubernetes-mcp-server
   destination:
     server: https://kubernetes.default.svc
     namespace: mcp
