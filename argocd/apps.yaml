@@ -770,11 +770,11 @@ spec:
 #     syncOptions:
 #       - CreateNamespace=true
 ---
-# Arrstalledhandler
+# Cleanuparr
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: arrstalledhandler
+  name: cleanuparr
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "3"
@@ -785,7 +785,7 @@ spec:
   sources:
     - repoURL: https://github.com/aomarai/homelab.git
       targetRevision: HEAD
-      path: apps/arrstalledhandler
+      path: apps/cleanuparr
   destination:
     server: https://kubernetes.default.svc
     namespace: media
