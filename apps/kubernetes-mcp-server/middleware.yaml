@@ -1,0 +1,18 @@
+# Traefik BasicAuth in front of the kubernetes-mcp-server HTTPRoute.
+# The MCP endpoint is unauthenticated by default; because the server's
+# ServiceAccount is bound to cluster-admin (apps/kubernetes-mcp-server/values.yaml),
+# anything that can reach the hostname would otherwise have full cluster control.
+#
+# Users live in the SealedSecret "kubernetes-mcp-basicauth" (sealed-secret.yaml),
+# key "users" (htpasswd format). In the same namespace as the HTTPRoute (mcp) --
+# Traefik Middleware refs are namespace-scoped.
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: kubernetes-mcp-basicauth
+  namespace: mcp
+spec:
+  basicAuth:
+    secret: kubernetes-mcp-basicauth
+    # keep the Authorization header (default); the MCP server ignores it.
+    removeHeader: false
