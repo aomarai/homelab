@@ -795,41 +795,43 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-# ---
-# Sonarqube CE
-# apiVersion: argoproj.io/v1alpha1
-# kind: Application
-# metadata:
-#   name: sonarqube
-#   namespace: argocd
-#   annotations:
-#     argocd.argoproj.io/sync-wave: "4"
-#   finalizers:
-#     - resources-finalizer.argocd.argoproj.io
-# spec:
-#   project: default
-#   sources:
-#     - repoURL: https://SonarSource.github.io/helm-chart-sonarqube/
-#       chart: sonarqube
-#       targetRevision: "2026.4.1"
-#       helm:
-#         valueFiles:
-#           - $values/apps/sonarqube/values.yaml
-#     - repoURL: https://github.com/aomarai/homelab.git
-#       targetRevision: HEAD
-#       ref: values
-#     - repoURL: https://github.com/aomarai/homelab.git
-#       targetRevision: HEAD
-#       path: apps/sonarqube
-#   destination:
-#     server: https://kubernetes.default.svc
-#     namespace: sonarqube
-#   syncPolicy:
-#     automated:
-#       prune: true
-#       selfHeal: true
-#     syncOptions:
-#       - CreateNamespace=true
+---
+# Sonarqube CE (Community Build 2026.4.1). Reachable in-cluster at
+# http://sonarqube-sonarqube.sonarqube.svc.cluster.local:9000 — the ARC runners
+# use that Service DNS directly, not the sq.homelab.local HTTPRoute.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sonarqube
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://SonarSource.github.io/helm-chart-sonarqube/
+      chart: sonarqube
+      targetRevision: "2026.4.1"
+      helm:
+        valueFiles:
+          - $values/apps/sonarqube/values.yaml
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      ref: values
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      path: apps/sonarqube
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sonarqube
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
 ---
 # Hashicorp Vault
 # apiVersion: argoproj.io/v1alpha1
@@ -925,6 +927,40 @@ spec:
     - repoURL: https://github.com/aomarai/homelab.git
       targetRevision: HEAD
       path: apps/arc-runners
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: arc-runners
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# Second ARC runner scale set, for github.com/aomarai/Aha. ARC registers one
+# scale set per githubConfigUrl and GitHub has no user-level self-hosted
+# runners, so this lives alongside `arc-runners` instead of widening it.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: arc-runners-aha
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "7"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
+      chart: gha-runner-scale-set
+      targetRevision: "0.14.2"
+      helm:
+        valueFiles:
+          - $values/apps/arc-runners-aha/values.yaml
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: arc-runners

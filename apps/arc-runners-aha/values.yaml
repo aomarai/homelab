@@ -1,0 +1,45 @@
+# ARC runner scale set for github.com/aomarai/Aha.
+#
+# ARC registers exactly one runner scale set per githubConfigUrl, and GitHub
+# only offers self-hosted runners at the repo / org / enterprise level (there
+# is no user-account level), so the personal account aomarai cannot be used
+# here — each repo gets its own scale set. This one is a sibling of the
+# `arc-runners` scale set: same controller, same namespace, same GitHub App
+# secret, different repo and scale set name.
+githubConfigUrl: "https://github.com/aomarai/Aha"
+githubConfigSecret: "arc-github-secret"
+
+# Workflows select these runners with `runs-on: aha-runners`.
+runnerScaleSetName: "aha-runners"
+
+minRunners: 0
+maxRunners: 2
+
+containerMode:
+  type: "kubernetes"
+  kubernetesModeWorkVolumeClaim:
+    accessModes: ["ReadWriteOnce"]
+    storageClassName: "longhorn"
+    resources:
+      requests:
+        storage: 1Gi
+
+template:
+  spec:
+    priorityClassName: "no-priority"
+    containers:
+      - name: runner
+        # Ubuntu 24.04 base, NOPASSWD sudo, git/curl/jq/unzip, gpg-agent.
+        # No JRE and no gpg/dirmngr — the SonarQube scan job handles both.
+        image: ghcr.io/actions/actions-runner:latest
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "2"
+            memory: "1.5Gi"
+
+controllerServiceAccount:
+  namespace: arc-systems
+  name: arc-controller-gha-rs-controller
