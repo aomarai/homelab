@@ -32,6 +32,12 @@ template:
         # Ubuntu 24.04 base, NOPASSWD sudo, git/curl/jq/unzip, gpg-agent.
         # No JRE and no gpg/dirmngr — the SonarQube scan job handles both.
         image: ghcr.io/actions/actions-runner:latest
+        # REQUIRED. The chart's default runner container carries this command,
+        # but defining template.spec.containers replaces the chart's list
+        # outright (Helm does not merge list items). Without it the container
+        # runs the image's default entrypoint and exits immediately, the runner
+        # never registers, and every job stays queued while ARC churns pods.
+        command: ["/home/runner/run.sh"]
         resources:
           requests:
             cpu: "500m"

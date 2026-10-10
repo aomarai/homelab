@@ -21,6 +21,11 @@ template:
     containers:
       - name: runner
         image: ghcr.io/actions/actions-runner:latest
+        # REQUIRED — same latent bug as apps/arc-runners-aha: declaring
+        # template.spec.containers replaces the chart's default container list,
+        # dropping the chart's command. Without it the container exits
+        # immediately and no runner ever registers.
+        command: ["/home/runner/run.sh"]
         resources:
           requests:
             cpu: "500m"
