@@ -1,16 +1,41 @@
 # kubernetes-mcp-server values
-# Latest: v0.0.66
+# Chart: oci://ghcr.io/containers/charts/kubernetes-mcp-server (version pinned in argocd/apps.yaml)
+# Upstream values reference:
+# https://github.com/containers/kubernetes-mcp-server/blob/main/charts/kubernetes-mcp-server/values.yaml
 
-# Image configuration
+# Image configuration.
+# This chart takes registry/repository/version as separate keys
+# (it does NOT use image.repository + image.tag).
 image:
-  repository: ghcr.io/containers/kubernetes-mcp-server
+  registry: ghcr.io
+  repository: containers/kubernetes-mcp-server
+  version: v0.0.66
   pullPolicy: IfNotPresent
-  tag: "v0.0.66"
 
-# Service configuration
+# Service configuration.
+# service.port is also the port the server listens on (config.port is derived from it).
 service:
   type: ClusterIP
-  port: 8000
+  port: 8080
+
+# Bind the server's ServiceAccount to the built-in "view" ClusterRole so the
+# MCP server has read-only (cluster-wide) access to the resources it exposes.
+rbac:
+  create: true
+  extraClusterRoleBindings:
+    - name: view
+      roleRef:
+        name: view
+        external: true
+
+# The upstream chart enables a classic Ingress by default and it requires
+# ingress.host to be set, otherwise rendering fails. We expose the server
+# through a Traefik HTTPRoute instead (apps/kubernetes-mcp-server/httproute.yaml),
+# so disable both the built-in Ingress and the chart's own HTTPRoute.
+ingress:
+  enabled: false
+httpRoute:
+  enabled: false
 
 # Resource limits
 resources:

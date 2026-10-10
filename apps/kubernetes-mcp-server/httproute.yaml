@@ -12,14 +12,15 @@ spec:
       namespace: traefik
       sectionName: websecure
   hostnames:
-    - kubernetes-mcp.local
+    - kubernetes-mcp.homelab.local
   rules:
     - matches:
         - path:
             type: PathPrefix
-            value: /api/mcp/kubernetes/
+            value: /
       backendRefs:
         - group: ""
           kind: Service
           name: kubernetes-mcp-server
-          port: 8000
+          port: 8080
+          weight: 1
