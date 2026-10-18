@@ -972,6 +972,42 @@ spec:
     syncOptions:
       - CreateNamespace=true
 ---
+# Third ARC runner scale set, for github.com/aomarai/shulkr. ARC registers one
+# scale set per githubConfigUrl and GitHub has no user-level self-hosted
+# runners, so this lives alongside `arc-runners` and `arc-runners-aha` instead
+# of widening either. The SonarQube workflow in aomarai/shulkr selects it with
+# `runs-on: shulkr-runners`.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: arc-runners-shulkr
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "7"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
+      chart: gha-runner-scale-set
+      targetRevision: "0.14.2"
+      helm:
+        valueFiles:
+          - $values/apps/arc-runners-shulkr/values.yaml
+    - repoURL: https://github.com/aomarai/homelab.git
+      targetRevision: HEAD
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: arc-runners
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
 # Harbor
 # apiVersion: argoproj.io/v1alpha1
 # kind: Application

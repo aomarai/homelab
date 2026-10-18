@@ -1,0 +1,57 @@
+# ARC runner scale set for github.com/aomarai/shulkr.
+#
+# ARC registers exactly one runner scale set per githubConfigUrl, and GitHub
+# only offers self-hosted runners at the repo / org / enterprise level (there
+# is no user-account level), so the personal account aomarai cannot be used
+# here -- each repo gets its own scale set. This one is a sibling of the
+# `arc-runners` and `arc-runners-aha` scale sets: same controller, same
+# namespace, same GitHub App secret, different repo and scale set name.
+githubConfigUrl: "https://github.com/aomarai/shulkr"
+githubConfigSecret: "arc-github-secret"
+
+# Workflows select these runners with `runs-on: shulkr-runners`.
+runnerScaleSetName: "shulkr-runners"
+
+minRunners: 0
+maxRunners: 2
+
+containerMode:
+  type: "kubernetes"
+  kubernetesModeWorkVolumeClaim:
+    accessModes: ["ReadWriteOnce"]
+    storageClassName: "longhorn"
+    resources:
+      requests:
+        storage: 5Gi
+
+template:
+  spec:
+    priorityClassName: "no-priority"
+    # The longhorn volume mounts root-owned, so the runner user (uid/gid 1001
+    # in ghcr.io/actions/actions-runner) cannot create /home/runner/_work/_tool
+    # and every job dies in "Set up job" with
+    # System.UnauthorizedAccessException: Access to the path ... is denied.
+    # fsGroup makes kubelet group-own the volume so 1001 can write.
+    securityContext:
+      fsGroup: 1001
+      fsGroupChangePolicy: "OnRootMismatch"
+    containers:
+      - name: runner
+        image: ghcr.io/actions/actions-runner:latest
+        # REQUIRED. The chart's default runner container carries this command,
+        # but defining template.spec.containers replaces the chart's list
+        # outright (Helm does not merge list items). Without it the container
+        # runs the image's default entrypoint and exits immediately, the runner
+        # never registers, and every job stays queued while ARC churns pods.
+        command: ["/home/runner/run.sh"]
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "2"
+            memory: "1.5Gi"
+
+controllerServiceAccount:
+  namespace: arc-systems
+  name: arc-controller-gha-rs-controller
