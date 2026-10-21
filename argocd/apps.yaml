@@ -903,40 +903,40 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: arc-runners
-  namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "6"
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  sources:
-    - repoURL: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
-      chart: gha-runner-scale-set
-      targetRevision: "0.14.2"
-      helm:
-        valueFiles:
-          - $values/apps/arc-runners/values.yaml
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      ref: values
-    - repoURL: https://github.com/aomarai/homelab.git
-      targetRevision: HEAD
-      path: apps/arc-runners
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: arc-runners
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+# ---
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: arc-runners
+#   namespace: argocd
+#   annotations:
+#     argocd.argoproj.io/sync-wave: "6"
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+# spec:
+#   project: default
+#   sources:
+#     - repoURL: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
+#       chart: gha-runner-scale-set
+#       targetRevision: "0.14.2"
+#       helm:
+#         valueFiles:
+#           - $values/apps/arc-runners/values.yaml
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       ref: values
+#     - repoURL: https://github.com/aomarai/homelab.git
+#       targetRevision: HEAD
+#       path: apps/arc-runners
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: arc-runners
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true
 ---
 # Second ARC runner scale set, for github.com/aomarai/Aha. ARC registers one
 # scale set per githubConfigUrl and GitHub has no user-level self-hosted
