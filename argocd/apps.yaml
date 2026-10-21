@@ -1000,8 +1000,6 @@ spec:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
 ---
 # Third ARC runner scale set, for github.com/aomarai/shulkr. ARC registers one
 # scale set per githubConfigUrl and GitHub has no user-level self-hosted
@@ -1036,8 +1034,6 @@ spec:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
 ---
 # Harbor
 # apiVersion: argoproj.io/v1alpha1
