@@ -938,6 +938,37 @@ spec:
 #     syncOptions:
 #       - CreateNamespace=true
 ---
+# Shared ARC resources: the `arc-runners` namespace, the GitHub App credential
+# secret every scale set consumes, and the RBAC that lets the controller read
+# it. These were previously bundled into `apps/arc-runners/` alongside the
+# (unused) jobhunt `homelab-runners` scale set, so disabling that app to retire
+# the scale set also pruned the namespace and the credential out from under the
+# Aha and shulkr scale sets. Owned here instead, ahead of the wave-7 scale sets.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: arc-runners-base
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/aomarai/homelab.git
+    targetRevision: HEAD
+    path: apps/arc-runners-base
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: arc-runners
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
 # Second ARC runner scale set, for github.com/aomarai/Aha. ARC registers one
 # scale set per githubConfigUrl and GitHub has no user-level self-hosted
 # runners, so this lives alongside `arc-runners` instead of widening it.
