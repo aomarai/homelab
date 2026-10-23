@@ -796,7 +796,7 @@ spec:
     syncOptions:
       - CreateNamespace=true
 ---
-# Sonarqube CE (Community Build 2026.4.1). Reachable in-cluster at
+# Sonarqube CE (Community Build 26.10.0 via chart 2026.5.1002). Reachable in-cluster at
 # http://sonarqube-sonarqube.sonarqube.svc.cluster.local:9000 — the ARC runners
 # use that Service DNS directly, not the sq.homelab.local HTTPRoute.
 apiVersion: argoproj.io/v1alpha1
@@ -813,7 +813,7 @@ spec:
   sources:
     - repoURL: https://SonarSource.github.io/helm-chart-sonarqube/
       chart: sonarqube
-      targetRevision: "2026.4.1"
+      targetRevision: "2026.5.1002"
       helm:
         valueFiles:
           - $values/apps/sonarqube/values.yaml
