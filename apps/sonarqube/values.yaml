@@ -1,5 +1,9 @@
 community:
   enabled: true
+  # Latest Community Build image (26.10.0.133078, pushed 2026-10-17).
+  # Chart 2026.5.1002 defaults to 26.9.0.129388; this override picks the newest
+  # published build. Remove buildNumber to fall back to the chart default.
+  buildNumber: "26.10.0.133078"
 monitoringPasscodeSecretName: "monitoring-creds"
 monitoringPasscodeSecretKey: "monitoringPasscode"
 
@@ -13,3 +17,14 @@ jdbcOverwrite:
 persistence:
   enabled: true
   size: 10Gi
+# Pin the container footprint to what 26.7.0 used. Chart 2026.5.1002 doubles the
+# default request (2Gi -> 4Gi) and limit (6Gi -> 10Gi); the pod runs on
+# worker-1-storage, a small node shared with the media stack, so a 4Gi request
+# risks leaving SonarQube unschedulable during the rollout. Limits keep headroom.
+resources:
+  requests:
+    cpu: "400m"
+    memory: "2048M"
+  limits:
+    cpu: "800m"
+    memory: "6144M"
